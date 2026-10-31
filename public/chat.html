@@ -1,0 +1,1903 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="/manifest.json">
+<title>5M Chat — Private Rooms</title>
+<style>
+:root{--bg:#100d1c;--panel:#1b1630;--light:#251d3d;--purple:#9b7cff;--pale:#c8b5ff;--text:#f7f4ff;--muted:#aaa2c2;--border:#393052}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:18px;background:radial-gradient(circle at top left,#30204e,transparent 38%),var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}
+button,input{font:inherit}
+button{padding:11px 15px;border:0;border-radius:12px;background:var(--purple);color:#160e2a;font-weight:700;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+input{width:100%;padding:12px 13px;border-radius:10px;background:#110e20;color:var(--text);border:1px solid var(--border);outline:none}
+input:focus{border-color:var(--purple)}
+.app{max-width:900px;margin:20px auto;overflow:hidden;background:rgba(27,22,48,.97);border:1px solid var(--border);border-radius:22px;box-shadow:0 24px 90px #0006}
+header{padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:#211a37;border-bottom:1px solid var(--border)}
+.brand{font-size:24px;font-weight:850}.brand span{color:var(--pale)}
+.subtitle{margin-top:5px;color:var(--muted);font-size:12px}
+.header-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.account{font-size:12px;color:var(--pale);overflow-wrap:anywhere}
+.status{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px}
+.dot{width:8px;height:8px;border-radius:50%;background:#888;display:inline-block}.dot.online{background:#64e3a0}
+main{padding:22px}
+h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:0 0 14px}
+.muted{color:var(--muted);line-height:1.5;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:20px 0}
+.panel,.room-card,.request-card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:17px}
+.field{margin:13px 0}.field label{display:block;font-size:13px;margin-bottom:7px}
+.full{width:100%}.secondary{background:#33284d;color:var(--text);border:1px solid #4a3b68}
+.danger{background:#4b2538;color:#ffd8e1;border:1px solid #774057}
+.room-list,.request-list{display:grid;gap:10px;margin:14px 0}
+.room-card,.request-card{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.room-card h3,.request-card h3{font-size:15px;margin:0 0 5px}
+.room-card p,.request-card p{font-size:12px;color:var(--muted);margin:0;overflow-wrap:anywhere}
+.room-actions{display:flex;gap:7px;flex-wrap:wrap}.room-actions button{padding:9px 12px}
+.notice{padding:11px 13px;border-radius:10px;margin:12px 0;background:#251d3d;color:var(--pale);font-size:13px;overflow-wrap:anywhere}
+.error{color:#ff9aaa}.success{color:#7fe4b0}
+.hidden{display:none!important}
+#chatPanel{padding:0}
+.room-bar{padding:13px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#181329;border-bottom:1px solid var(--border);color:var(--muted);font-size:12px}
+.room-bar strong{color:var(--pale)}
+.online-panel{padding:13px 20px;background:#1a142b;border-bottom:1px solid var(--border)}
+
+/* Profile editor */
+.profile-panel {
+  margin: 14px 20px;
+  padding: 16px;
+  border: 1px solid #49304f;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #24152e, #171329);
+}
+
+.profile-title {
+  margin: 0 0 12px;
+  color: #ff9ed2;
+  font-size: 15px;
+}
+
+.profile-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.profile-avatar {
+  width: 58px;
+  height: 58px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 2px solid #ff73bd;
+  border-radius: 50%;
+  background: #30203e;
+  font-size: 30px;
+}
+
+.profile-avatar img,
+.chat-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.profile-controls input[type="file"] {
+  max-width: 100%;
+  font-size: 12px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.profile-avatar {
+  cursor: pointer;
+}
+
+.emoji-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.emoji-option {
+  width: 43px;
+  height: 43px;
+  padding: 4px;
+  border: 1px solid #49304f;
+  background: #20172e;
+  color: white;
+  font-size: 23px;
+}
+
+.emoji-option.selected {
+  border: 2px solid #ff73bd;
+  background: #48223e;
+}
+
+.chat-avatar {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid #ff73bd;
+  border-radius: 50%;
+  background: #30203e;
+  font-size: 19px;
+}
+
+.online-user {
+  justify-content: flex-start;
+}
+
+.online-user .call-user-button {
+  margin-left: auto;
+}
+
+@media (max-width: 600px) {
+  .profile-panel {
+    margin: 12px;
+  }
+}
+
+.online-heading{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:9px}
+#onlineUsers{display:flex;flex-wrap:wrap;gap:8px}
+.online-user{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px;border:1px solid #3d3455;border-radius:20px;background:#251d3d;font-size:12px}
+.call-user-button{flex-shrink:0;border:0;border-radius:8px;padding:6px 10px;background:#6541a5;color:white;cursor:pointer;font:inherit}
+.call-panel{margin:12px 0;padding:16px;border:1px solid #6541a5;border-radius:14px;background:rgba(91,45,145,.16)}
+#callStatus{margin-bottom:12px;color:#e9d5ff;font-weight:600;overflow-wrap:anywhere}
+.call-actions{display:flex;flex-wrap:wrap;gap:8px}
+.call-actions button{border:0;border-radius:10px;padding:10px 14px;cursor:pointer;font:inherit}
+#acceptCallButton{background:#22a06b;color:white}
+#rejectCallButton,#endCallButton{background:#a83252;color:white}
+#muteCallButton{background:#6541a5;color:white}
+#remoteCallAudio{display:none}
+#messages{height:42vh;min-height:280px;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:13px}
+.message{max-width:82%;align-self:flex-start;padding:11px 13px;background:var(--light);border:1px solid var(--border);border-radius:5px 16px 16px 16px;overflow-wrap:anywhere}
+.message.mine{align-self:flex-end;background:#49346f;border-color:#60488d;border-radius:16px 5px 16px 16px}
+.sender{margin-bottom:5px;color:var(--pale);font-size:12px;font-weight:750}
+.message-text{white-space:pre-wrap;line-height:1.5}.message-time{margin-top:7px;color:#d0c6e8;opacity:.8;font-size:10px}
+.message audio{display:block;width:min(280px,65vw);margin-top:8px}
+.system-message{align-self:center;padding:7px 12px;background:#171329;border:1px solid var(--border);border-radius:20px;color:var(--muted);font-size:12px;text-align:center}
+#typingIndicator{min-height:22px;padding:0 22px 8px;color:var(--pale);font-size:12px}
+.composer{padding:15px;background:#181329;border-top:1px solid var(--border)}
+#messageForm{display:flex;gap:9px}#messageInput{min-width:0;flex:1}#sendButton{padding:0 18px}
+.tools{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin-top:12px}
+.small-status{font-size:12px;color:var(--muted)}
+#previewAudio{display:none;width:100%;margin-top:12px}
+#audioError{font-size:12px;color:#ff9aaa;margin-top:8px}
+.footnote{padding:12px 20px 18px;color:var(--muted);font-size:11px;text-align:center}
+@media(max-width:600px){body{padding:0}.app{margin:0;min-height:100vh;border-radius:0}header{padding:17px}main{padding:16px}.grid{grid-template-columns:1fr}#messages{height:48vh;padding:14px}.message{max-width:90%}}
+
+.sender-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.sender-row .chat-avatar {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.sender-row .sender {
+  min-width: 0;
+}
+
+.video-call-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 14px;
+  width: 100%;
+}
+
+.video-call-area[hidden] {
+  display: none;
+}
+
+.video-screen,
+.local-video-screen {
+  position: relative;
+  overflow: hidden;
+  background: #171522;
+  border: 1px solid #51416e;
+  border-radius: 14px;
+  aspect-ratio: 4 / 3;
+  min-width: 0;
+}
+
+.video-screen video,
+.local-video-screen video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.local-video-screen video {
+  transform: scaleX(-1);
+}
+
+.video-label {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: 5px 9px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 12px;
+}
+
+@media (max-width: 480px) {
+  .video-call-area {
+    grid-template-columns: 1fr;
+  }
+
+  .video-screen,
+  .local-video-screen {
+    aspect-ratio: 16 / 10;
+  }
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div>
+    <div class="brand">5M <span>Chat</span></div>
+    <div class="subtitle">Talk freely. Time disappears.</div>
+  </div>
+  <div class="header-right">
+    <div class="account" id="accountEmail">Checking account...</div>
+    <button type="button" class="secondary" id="logoutButton">Logout</button>
+    <div class="status"><span class="dot" id="connectionDot"></span><span id="status">Connecting...</span></div>
+  </div>
+</header>
+
+<section id="dashboard">
+<main>
+  <h1>Your private space.</h1>
+  <p class="muted">Create rooms and invite people you trust using their registered email address.</p>
+
+  <div class="grid">
+    <section class="panel">
+      <h2>＋ Create a room</h2>
+      <form id="createForm">
+        <div class="field">
+          <label for="newRoomName">Room name</label>
+          <input id="newRoomName" maxlength="50" placeholder="e.g. Friends Forever" required>
+        </div>
+        <button class="full" type="submit">Create private room</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>✉ Room requests</h2>
+      <p class="muted">When someone invites you to their room, their request appears here. Accept it to join.</p>
+      <div id="requestNotice" class="notice hidden" role="status"></div>
+      <div id="requestList" class="request-list"><p class="muted">Loading requests...</p></div>
+      <button type="button" class="secondary" id="refreshRequests">Refresh requests</button>
+    </section>
+  </div>
+
+  <section class="panel">
+    <h2>My rooms</h2>
+    <p class="muted">Your private rooms and their room codes.</p>
+    <div id="roomNotice" role="status" class="notice hidden"></div>
+    <div id="roomList" class="room-list"><p class="muted">Loading your rooms...</p></div>
+    <button id="refreshRooms" class="secondary" type="button">Refresh rooms</button>
+  </section>
+
+  <p id="dashboardError" class="muted error" role="alert"></p>
+  <p class="footnote">Messages expire five minutes after they are marked as seen. This is not end-to-end encrypted chat.</p>
+</main>
+</section>
+
+<section id="chatPanel" class="hidden">
+  <div class="room-bar">
+    <span>Room: <strong id="currentRoom"></strong></span>
+    <span id="currentUser"></span>
+    <button type="button" class="secondary" id="backButton">← My rooms</button>
+  </div>
+   
+  <section class="profile-panel" id="profilePanel">
+    <h2 class="profile-title">💜 Your profile</h2>
+
+    <div class="profile-preview">
+     <button
+  type="button"
+  class="profile-avatar"
+  id="profilePreview"
+  aria-label="Choose your profile avatar"
+  aria-expanded="false"
+  aria-controls="emojiOptions"
+>
+  😎
+</button>
+      <div>
+        <strong id="profileDisplayName">Your profile</strong>
+        <p class="muted">Choose an emoji or upload a picture.</p>
+
+      </div>
+    </div>
+
+    
+<div class="emoji-options hidden" id="emojiOptions">
+  <button type="button" class="emoji-option selected" data-emoji="😎">😎</button>
+  <button type="button" class="emoji-option" data-emoji="😊">😊</button>
+  <button type="button" class="emoji-option" data-emoji="😈">😈</button>
+  <button type="button" class="emoji-option" data-emoji="🦋">🦋</button>
+  <button type="button" class="emoji-option" data-emoji="🐼">🐼</button>
+  <button type="button" class="emoji-option" data-emoji="🚀">🚀</button>
+  <button type="button" class="emoji-option" data-emoji="👑">👑</button>
+  <button type="button" class="emoji-option" data-emoji="💜">💜</button>
+  <button type="button" class="emoji-option" data-emoji="🐱">🐱</button>
+  <button type="button" class="emoji-option" data-emoji="🐶">🐶</button>
+  <button type="button" class="emoji-option" data-emoji="🦊">🦊</button>
+  <button type="button" class="emoji-option" data-emoji="🐸">🐸</button>
+  <button type="button" class="emoji-option" data-emoji="🐵">🐵</button>
+  <button type="button" class="emoji-option" data-emoji="🐯">🐯</button>
+  <button type="button" class="emoji-option" data-emoji="🦁">🦁</button>
+  <button type="button" class="emoji-option" data-emoji="🐻">🐻</button>
+  <button type="button" class="emoji-option" data-emoji="🐨">🐨</button>
+  <button type="button" class="emoji-option" data-emoji="🐰">🐰</button>
+  <button type="button" class="emoji-option" data-emoji="🤖">🤖</button>
+  <button type="button" class="emoji-option" data-emoji="👻">👻</button>
+</div>
+    <div class="profile-controls">
+      <input
+        type="file"
+        id="profilePictureInput"
+        accept="image/png,image/jpeg,image/webp"
+        aria-label="Upload profile picture"
+      >
+      <button type="button" class="secondary" id="useEmojiButton">
+        Use emoji
+      </button>
+      <button type="button" id="saveProfileButton">
+        Save profile
+      </button>
+    </div>
+
+    <p class="small-status" id="profileStatus" role="status">
+      Select an avatar and save your profile.
+    </p>
+  </section>
+
+  <div class="online-panel">
+    <div class="online-heading">Online now · <span id="onlineCount">0</span></div>
+    <div id="onlineUsers" aria-live="polite"><span class="small-status">Waiting for room members...</span></div>
+
+    <div id="callPanel" class="call-panel hidden">
+      <div id="callStatus" role="status">Ready to call</div>
+      <div class="call-actions">
+        <button type="button" id="acceptCallButton" class="hidden">Accept call</button>
+        <button type="button" id="rejectCallButton" class="hidden">Decline</button>
+        <button type="button" id="muteCallButton" class="hidden">Mute microphone</button>
+        <button type="button" id="endCallButton" class="hidden">End call</button>
+      </div>
+      <div class="video-call-area" id="videoCallArea" hidden>
+  <div class="video-screen">
+    <video id="remoteCallVideo" autoplay playsinline></video>
+    <span class="video-label">Other person</span>
+  </div>
+
+  <div class="local-video-screen">
+    <video id="localCallVideo" autoplay muted playsinline></video>
+    <span class="video-label">You</span>
+  </div>
+</div>
+
+<audio id="remoteCallAudio" autoplay playsinline></audio>
+    </div>
+  </div>
+
+  <div id="messages" aria-live="polite"></div>
+  <div id="typingIndicator" aria-live="polite"></div>
+
+  <div class="composer">
+    <form id="messageForm">
+      <input id="messageInput" maxlength="5000" placeholder="Write a message..." autocomplete="off" aria-label="Message" required>
+      <button id="sendButton" type="submit">Send</button>
+    </form>
+    <div class="tools">
+      <button class="secondary" id="recordButton" type="button">🎙 Record voice</button>
+      <span class="small-status" id="recordingStatus"></span>
+      <button class="secondary" id="sendAudioButton" type="button" disabled>Send voice</button>
+      <button class="secondary" id="cancelAudioButton" type="button" disabled>Cancel</button>
+    </div>
+    <audio id="previewAudio" controls></audio>
+    <div id="audioError" role="status"></div>
+  </div>
+  <div class="footnote">Messages expire five minutes after they are marked as seen. This is not end-to-end encrypted chat.</div>
+</section>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const socket = io();
+
+let myName = "";
+let myRoom = "";
+let myUserId = "";
+let mediaRecorder = null;
+let audioStream = null;
+let audioChunks = [];
+let recordedBlob = null;
+let previewUrl = null;
+let recordingTimer = null;
+let typingTimer = null;
+let requestRefreshTimer = null;
+let isTyping = false;
+let recordingStartedAt = 0;
+let joiningRoom = false;
+
+const typingUsers = new Map();
+const messageElements = new Map();
+const pendingSeenMessages = new Set();
+const MAX_AUDIO_BYTES_LOCAL = 1_000_000;
+
+let activeCallId = null;
+let currentCallType = "audio";
+let peerConnection = null;
+let callLocalStream = null;
+let pendingIncomingCall = null;
+let callRole = null;
+let queuedIceCandidates = [];
+let callMuted = false;
+let callBusy = false;
+let outgoingTargetSocketId = null;
+
+const callRtcConfig = {
+  iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+};
+
+function showCallPanel(status) {
+  $("callPanel").classList.remove("hidden");
+  $("callStatus").textContent = status;
+}
+
+function setCallButtons({accept=false,reject=false,mute=false,end=false}={}) {
+  $("acceptCallButton").classList.toggle("hidden", !accept);
+  $("rejectCallButton").classList.toggle("hidden", !reject);
+  $("muteCallButton").classList.toggle("hidden", !mute);
+  $("endCallButton").classList.toggle("hidden", !end);
+}
+
+async function prepareCallConnection() {
+  if (peerConnection) return peerConnection;
+
+  if (!navigator.mediaDevices?.getUserMedia) {
+    throw new Error(
+      "Camera and microphone access requires HTTPS or localhost and a supported browser."
+    );
+  }
+
+  const callType = currentCallType || "audio";
+  const wantsVideo = callType === "video";
+
+  callLocalStream = await navigator.mediaDevices.getUserMedia({
+    audio: true,
+    video: wantsVideo
+      ? {
+          width: { ideal: 640 },
+          height: { ideal: 480 },
+          facingMode: "user"
+        }
+      : false
+  });
+
+  const localVideo = $("localCallVideo");
+  const remoteVideo = $("remoteCallVideo");
+  const videoArea = $("videoCallArea");
+  const remoteAudio = $("remoteCallAudio");
+
+  if (videoArea) videoArea.hidden = !wantsVideo;
+
+  if (wantsVideo && localVideo) {
+    localVideo.srcObject = callLocalStream;
+    localVideo.play().catch(() => {});
+  } else if (localVideo) {
+    localVideo.srcObject = null;
+  }
+
+  if (remoteVideo) remoteVideo.srcObject = null;
+  if (remoteAudio) remoteAudio.srcObject = null;
+
+  const pc = new RTCPeerConnection(callRtcConfig);
+  peerConnection = pc;
+
+  callLocalStream.getTracks().forEach(track => {
+    pc.addTrack(track, callLocalStream);
+  });
+
+  pc.onicecandidate = event => {
+    if (event.candidate && activeCallId) {
+      socket.emit("audio-call-ice", {
+        callId: activeCallId,
+        candidate: event.candidate
+      });
+    }
+  };
+
+  pc.ontrack = event => {
+    const stream = event.streams?.[0];
+    if (!stream) return;
+
+    if (remoteAudio) {
+      remoteAudio.srcObject = stream;
+      remoteAudio.play().catch(() => {});
+    }
+
+    if (remoteVideo && wantsVideo) {
+      remoteVideo.srcObject = stream;
+      remoteVideo.play().catch(() => {});
+    }
+  };
+
+  pc.onconnectionstatechange = () => {
+    if (peerConnection !== pc) return;
+
+    const state = pc.connectionState;
+
+    if (state === "connected") {
+      showCallPanel(
+        wantsVideo ? "Video call connected" : "Audio call connected"
+      );
+    } else if (state === "connecting") {
+      showCallPanel(
+        wantsVideo ? "Connecting video..." : "Connecting audio..."
+      );
+    } else if (state === "failed") {
+      showCallPanel("Connection failed. End the call and try again.");
+    } else if (state === "disconnected") {
+      showCallPanel("Connection interrupted...");
+    }
+  };
+
+  return pc;
+}
+
+async function applyQueuedIceCandidates() {
+  if (!peerConnection || !peerConnection.remoteDescription) return;
+
+  const candidates = queuedIceCandidates.splice(0);
+  for (const candidate of candidates) {
+    try {
+      await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+    } catch (error) {
+      console.error("Could not add ICE candidate:", error);
+    }
+  }
+}
+
+async function closeCall(sendEnd = false, message = "") {
+  const callId = activeCallId;
+
+  if (sendEnd && callId && socket.connected) {
+    socket.emit("end-audio-call", {callId});
+  }
+
+  if (peerConnection) {
+    peerConnection.ontrack = null;
+    peerConnection.onicecandidate = null;
+    peerConnection.onconnectionstatechange = null;
+    peerConnection.close();
+    peerConnection = null;
+  }
+
+  if (callLocalStream) {
+    callLocalStream.getTracks().forEach(track => track.stop());
+    callLocalStream = null;
+  }
+
+  
+$("remoteCallAudio").srcObject = null;
+
+const localVideo = $("localCallVideo");
+const remoteVideo = $("remoteCallVideo");
+const videoArea = $("videoCallArea");
+
+if (localVideo) localVideo.srcObject = null;
+if (remoteVideo) remoteVideo.srcObject = null;
+if (videoArea) videoArea.hidden = true;
+
+currentCallType = "audio";
+
+  activeCallId = null;
+  pendingIncomingCall = null;
+  callRole = null;
+  queuedIceCandidates = [];
+  callMuted = false;
+  callBusy = false;
+  outgoingTargetSocketId = null;
+
+  $("muteCallButton").textContent = "Mute microphone";
+  setCallButtons();
+  $("callPanel").classList.add("hidden");
+
+  if (message) {
+    $("audioError").textContent = message;
+  }
+}
+
+function showNotice(message, isError = false) {
+  const el = $("roomNotice");
+  el.textContent = message;
+  el.classList.remove("hidden", "error", "success");
+  el.classList.add(isError ? "error" : "success");
+}
+
+function showRequestNotice(message, isError = false) {
+  const el = $("requestNotice");
+  el.textContent = message;
+  el.classList.remove("hidden", "error", "success");
+  el.classList.add(isError ? "error" : "success");
+}
+
+function displayDashboardError(message = "") {
+  $("dashboardError").textContent = message;
+}
+
+async function api(url, options = {}) {
+  const response = await fetch(url, {
+    credentials: "same-origin",
+    ...options,
+    headers: {
+      ...(options.body ? {"Content-Type": "application/json"} : {}),
+      ...(options.headers || {})
+    }
+  });
+
+  let data = {};
+  try { data = await response.json(); } catch {}
+
+  if (response.status === 401) {
+    window.location.href = "/login.html";
+    throw new Error("Please sign in again.");
+  }
+  if (!response.ok) {
+    throw new Error(data.message || data.error || "Request failed (" + response.status + ")");
+  }
+  return data;
+}
+
+async function loadAccount() {
+  try {
+    const data = await api("/api/auth/me");
+    const user = data.user || {};
+    myUserId = user.id || "";
+    myName = user.name || "";
+    loadProfileEditor(user);
+    $("accountEmail").textContent = user.email || "Signed in";
+    $("currentUser").textContent = user.email || user.name || "";
+    return true;
+  } catch (error) {
+    $("accountEmail").textContent = "Not signed in";
+    displayDashboardError(error.message);
+    return false;
+  }
+}
+let myAvatarType = "emoji";
+let myAvatarValue = "😎";
+let selectedAvatarType = "emoji";
+let selectedAvatarValue = "😎";
+$("profilePreview").addEventListener("click", () => {
+  const emojiOptions = $("emojiOptions");
+  const isHidden = emojiOptions.classList.contains("hidden");
+
+  emojiOptions.classList.toggle("hidden", !isHidden);
+
+  $("profilePreview").setAttribute(
+    "aria-expanded",
+    String(isHidden)
+  );
+});
+
+function renderProfilePreview() {
+const preview = $("profilePreview");
+  preview.replaceChildren();
+
+  if (selectedAvatarType === "photo") {
+    const img = document.createElement("img");
+    img.src = selectedAvatarValue;
+    img.alt = "Your profile picture";
+    preview.appendChild(img);
+  } else {
+    preview.textContent = selectedAvatarValue;
+  }
+
+  $("emojiOptions").querySelectorAll("[data-emoji]").forEach(button => {
+    button.classList.toggle(
+      "selected",
+      selectedAvatarType === "emoji" &&
+      button.dataset.emoji === selectedAvatarValue
+    );
+  });
+}
+
+function loadProfileEditor(user) {
+  myAvatarType = user.avatarType || "emoji";
+  myAvatarValue = user.avatarValue || "😎";
+  selectedAvatarType = myAvatarType;
+  selectedAvatarValue = myAvatarValue;
+
+  $("profileDisplayName").textContent = user.name || "Your profile";
+  $("profilePictureInput").value = "";
+  renderProfilePreview();
+}
+
+$("emojiOptions").addEventListener("click", event => {
+  const button = event.target.closest("[data-emoji]");
+  if (!button) return;
+
+  selectedAvatarType = "emoji";
+  selectedAvatarValue = button.dataset.emoji;
+  $("profilePictureInput").value = "";
+
+  renderProfilePreview();
+
+  // Close the emoji picker after selection.
+  $("emojiOptions").classList.add("hidden");
+  $("profilePreview").setAttribute("aria-expanded", "false");
+
+  $("profileStatus").textContent =
+    "Emoji selected. Save to update your profile.";
+});
+
+
+$("profilePictureInput").addEventListener("change", event => {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+    $("profileStatus").textContent = "Choose a JPG, PNG, or WebP image.";
+    event.target.value = "";
+    return;
+  }
+
+  if (file.size > 180 * 1024) {
+    $("profileStatus").textContent = "Image must be smaller than 180 KB.";
+    event.target.value = "";
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    selectedAvatarType = "photo";
+    selectedAvatarValue = String(reader.result);
+    renderProfilePreview();
+    $("profileStatus").textContent = "Picture selected. Save to update your profile.";
+  };
+
+  reader.onerror = () => {
+    $("profileStatus").textContent = "Could not read this picture.";
+  };
+
+  reader.readAsDataURL(file);
+});
+
+
+$("useEmojiButton").addEventListener("click", () => {
+  $("emojiOptions").classList.remove("hidden");
+  $("profilePreview").setAttribute("aria-expanded", "true");
+  $("profileStatus").textContent = "Choose an emoji below.";
+});
+
+
+$("saveProfileButton").addEventListener("click", async () => {
+  const button = $("saveProfileButton");
+  button.disabled = true;
+  $("profileStatus").textContent = "Saving your profile...";
+
+  try {
+    const result = await api("/api/profile", {
+      method: "PUT",
+     body: JSON.stringify({
+  avatarType: selectedAvatarType,
+  avatarValue: selectedAvatarValue,
+})
+    });
+
+    myAvatarType = selectedAvatarType;
+    myAvatarValue = selectedAvatarValue;
+
+    if (result.user) {
+      loadProfileEditor(result.user);
+    }
+
+    $("profileStatus").textContent = "Profile saved successfully! 💜";
+  } catch (error) {
+    $("profileStatus").textContent = "Could not save: " + error.message;
+  } finally {
+    button.disabled = false;
+  }
+});
+
+
+$("logoutButton").addEventListener("click", async () => {
+  $("logoutButton").disabled = true;
+  await closeCall(true);
+  try {
+    await fetch("/api/auth/logout", {method:"POST",credentials:"same-origin"});
+  } finally {
+    socket.disconnect();
+    window.location.href = "/login.html";
+  }
+});
+
+function extractRooms(data) {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data.rooms)) return data.rooms;
+  if (Array.isArray(data.data)) return data.data;
+  return [];
+}
+
+async function loadRooms() {
+  $("roomList").replaceChildren();
+  const loading = document.createElement("p");
+  loading.className = "muted";
+  loading.textContent = "Loading your rooms...";
+  $("roomList").appendChild(loading);
+
+  try {
+    const data = await api("/api/rooms");
+    const rooms = extractRooms(data);
+    $("roomList").replaceChildren();
+    displayDashboardError("");
+
+    if (!rooms.length) {
+      const empty = document.createElement("p");
+      empty.className = "muted";
+      empty.textContent = "No rooms yet. Create a room or accept a room request.";
+      $("roomList").appendChild(empty);
+      return;
+    }
+
+    rooms.forEach(room => {
+    const code = String(room.code || "").toUpperCase();
+const name = String(room.name || "Private room");
+const roomId = String(room.id || room._id || "");
+      const card = document.createElement("article");
+      card.className = "room-card";
+
+      const info = document.createElement("div");
+      const title = document.createElement("h3");
+      title.textContent = name;
+      const codeText = document.createElement("p");
+      codeText.textContent = "Room code: " + code;
+      info.append(title, codeText);
+
+      const actions = document.createElement("div");
+      actions.className = "room-actions";
+
+      const join = document.createElement("button");
+      join.textContent = "Open chat";
+      join.addEventListener("click", () => enterRoom(code));
+
+      const invite = document.createElement("button");
+      invite.className = "secondary";
+      invite.textContent = "Invite by email";
+      invite.addEventListener("click", () => inviteToRoom(code, name));
+
+      actions.append(join, invite);
+
+if (roomId && room.owner === true) {
+  const deleteBtn = document.createElement("button");
+  deleteBtn.className = "secondary";
+  deleteBtn.textContent = "Delete Room";
+
+  deleteBtn.addEventListener("click", async () => {
+    const confirmed = confirm(
+      `Are you sure you want to delete "${name}"?`
+    );
+
+    if (!confirmed) return;
+
+    try {
+    const response = await fetch(`/api/rooms/${roomId}`, {
+  credentials: "same-origin",
+        method: "DELETE"
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Could not delete room.");
+      }
+
+      alert("Room deleted successfully!");
+      loadRooms();
+    } catch (error) {
+      alert(error.message);
+    }
+  });
+
+  actions.appendChild(deleteBtn);
+}
+      card.append(info, actions);
+      $("roomList").appendChild(card);
+    });
+  } catch (error) {
+    $("roomList").replaceChildren();
+    displayDashboardError(error.message);
+    const help = document.createElement("p");
+    help.className = "muted";
+    help.textContent = "Check your login and server connection.";
+    $("roomList").appendChild(help);
+  }
+}
+
+$("createForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  displayDashboardError("");
+  const name = $("newRoomName").value.trim();
+  if (!name) return;
+
+  const button = $("createForm").querySelector("button");
+  button.disabled = true;
+  try {
+    const data = await api("/api/rooms", {method:"POST",body:JSON.stringify({name})});
+    $("newRoomName").value = "";
+    const code = data.room?.code || "";
+    showNotice(code ? "Room created! Your room code is " + code + ". Invite a registered user by email." : (data.message || "Room created."));
+    await loadRooms();
+  } catch (error) {
+    displayDashboardError(error.message);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+async function inviteToRoom(code, roomName) {
+  const email = prompt('Enter the registered email address to invite to "' + roomName + '":');
+  if (email === null) return;
+  const cleanEmail = email.trim().toLowerCase();
+
+  if (!cleanEmail) {
+    showNotice("Please enter an email address.", true);
+    return;
+  }
+
+  try {
+    const data = await api("/api/rooms/" + encodeURIComponent(code) + "/request", {
+      method:"POST",body:JSON.stringify({email:cleanEmail})
+    });
+    showNotice(data.message || "Room request sent.");
+  } catch (error) {
+    showNotice(error.message, true);
+  }
+}
+
+async function loadRequests() {
+  try {
+    const data = await api("/api/requests");
+    const requests = Array.isArray(data.requests) ? data.requests : [];
+    const list = $("requestList");
+    list.replaceChildren();
+
+    if (!requests.length) {
+      const empty = document.createElement("p");
+      empty.className = "muted";
+      empty.textContent = "No pending room requests.";
+      list.appendChild(empty);
+      return;
+    }
+
+    requests.forEach(request => {
+      const card = document.createElement("article");
+      card.className = "request-card";
+      const info = document.createElement("div");
+      const title = document.createElement("h3");
+      title.textContent = request.roomName || "Private room";
+      const detail = document.createElement("p");
+      detail.textContent = (request.senderName || "Someone") +
+        (request.senderEmail ? " (" + request.senderEmail + ")" : "") +
+        " wants you to join this room.";
+      const code = document.createElement("p");
+      code.style.marginTop = "5px";
+      code.textContent = "Room code: " + (request.roomCode || "");
+      info.append(title, detail, code);
+
+      const actions = document.createElement("div");
+      actions.className = "room-actions";
+      const accept = document.createElement("button");
+      accept.textContent = "Accept";
+      const reject = document.createElement("button");
+      reject.textContent = "Reject";
+      reject.className = "danger";
+      accept.addEventListener("click", () => respondToRequest(request.id, "accept", accept, reject));
+      reject.addEventListener("click", () => respondToRequest(request.id, "reject", accept, reject));
+      const deleteRoom = document.createElement("button");
+deleteRoom.className = "secondary";
+deleteRoom.textContent = "Delete room";
+
+deleteRoom.addEventListener("click", async () => {
+  if (!confirm('Are you sure you want to delete "' + name + '"? This cannot be undone.')) {
+    return;
+  }
+
+  try {
+    const result = await api("/api/rooms/" + encodeURIComponent(room._id), {
+      method: "DELETE"
+    });
+
+    showNotice(result.message || "Room deleted successfully.");
+    await loadRooms();
+  } catch (error) {
+    showNotice(error.message, true);
+  }
+});
+
+      actions.append(accept, reject);
+      card.append(info, actions);
+      list.appendChild(card);
+    });
+  } catch (error) {
+    $("requestList").replaceChildren();
+    const problem = document.createElement("p");
+    problem.className = "error";
+    problem.textContent = error.message || "Could not load requests.";
+    $("requestList").appendChild(problem);
+  }
+}
+
+async function respondToRequest(id, action, acceptButton, rejectButton) {
+  acceptButton.disabled = true;
+  rejectButton.disabled = true;
+  try {
+    const data = await api("/api/requests/" + encodeURIComponent(id) + "/" + action, {
+      method:"POST",body:JSON.stringify({})
+    });
+    showRequestNotice(data.message || (action === "accept" ? "Request accepted." : "Request rejected."));
+    await loadRequests();
+    await loadRooms();
+  } catch (error) {
+    showRequestNotice(error.message, true);
+    await loadRequests();
+  }
+}
+
+$("refreshRooms").addEventListener("click", loadRooms);
+$("refreshRequests").addEventListener("click", loadRequests);
+
+function enterRoom(code) {
+  myRoom = String(code || "").trim().toUpperCase();
+  if (!myRoom) return;
+  if (!socket.connected) {
+    showNotice("Connecting to the chat server. Please try again in a moment.", true);
+    return;
+  }
+  joiningRoom = true;
+  displayDashboardError("");
+  socket.emit("join-chat", {room:myRoom});
+}
+
+socket.on("connect", () => {
+  $("status").textContent = "Connected";
+  $("connectionDot").classList.add("online");
+  loadRequests();
+});
+
+socket.on("connect_error", error => {
+  $("status").textContent = "Connection error";
+  $("connectionDot").classList.remove("online");
+  console.error("Chat connection error:", error.message);
+});
+
+socket.on("disconnect", () => {
+  $("status").textContent = "Disconnected";
+  $("connectionDot").classList.remove("online");
+  typingUsers.clear();
+  renderTypingIndicator();
+  $("onlineUsers").replaceChildren();
+  $("onlineCount").textContent = "0";
+  pendingSeenMessages.clear();
+  void closeCall(false, "Connection lost. The audio call was closed.");
+});
+
+socket.on("room-request", notification => {
+  showRequestNotice("New room request" +
+    (notification?.senderName ? " from " + notification.senderName : "") +
+    (notification?.roomName ? " for " + notification.roomName : "") + ".");
+  loadRequests();
+});
+
+socket.on("join-error", message => {
+  joiningRoom = false;
+  myRoom = "";
+  $("dashboard").classList.remove("hidden");
+  $("chatPanel").classList.add("hidden");
+  showNotice(message || "Unable to join this room.", true);
+});
+
+socket.on("room-deleted", async () => {
+  await loadRooms();
+  await loadRequests();
+
+  if (myRoom) {
+    const data = await api("/api/rooms").catch(() => null);
+    const rooms = extractRooms(data);
+    const currentRoomExists = rooms.some(room =>
+      String(room.code || "").toUpperCase() === myRoom.toUpperCase()
+    );
+
+    if (!currentRoomExists) {
+      await closeCall(false, "This room was deleted.");
+      myRoom = "";
+      joiningRoom = false;
+      $("chatPanel").classList.add("hidden");
+      $("dashboard").classList.remove("hidden");
+      socket.disconnect();
+      socket.connect();
+    }
+  }
+
+  showNotice("A room was deleted.");
+});
+
+socket.on("joined-chat", ({name, room, roomName}) => {
+  joiningRoom = false;
+  myName = name || myName;
+  myRoom = room;
+  $("currentRoom").textContent = (roomName ? roomName + " · " : "") + room;
+  $("currentUser").textContent = "You: " + myName;
+  $("dashboard").classList.add("hidden");
+  $("chatPanel").classList.remove("hidden");
+  $("status").textContent = "In chat";
+  $("messages").replaceChildren();
+  messageElements.clear();
+  pendingSeenMessages.clear();
+  $("messageInput").focus();
+  requestAnimationFrame(checkVisibleMessages);
+});
+
+$("backButton").addEventListener("click", async () => {
+  await closeCall(true);
+  socket.emit("typing", {room:myRoom,isTyping:false});
+  myRoom = "";
+  joiningRoom = false;
+  socket.disconnect();
+  socket.connect();
+  $("chatPanel").classList.add("hidden");
+  $("dashboard").classList.remove("hidden");
+  $("status").textContent = "Connecting...";
+  loadRooms();
+  loadRequests();
+});
+
+/* ONLINE USERS + CALL BUTTONS */
+
+/* ONLINE USERS + AVATARS + CALL BUTTONS */
+socket.on("online-users", users => {
+  $("onlineUsers").replaceChildren();
+
+  const list = Array.isArray(users) ? users : [];
+  $("onlineCount").textContent = String(list.length);
+
+  if (!list.length) {
+    const empty = document.createElement("span");
+    empty.className = "small-status";
+    empty.textContent = "No one is online.";
+    $("onlineUsers").appendChild(empty);
+    return;
+  }
+
+  list.forEach(user => {
+    const chip = document.createElement("div");
+    chip.className = "online-user";
+
+    // User avatar
+    const avatar = document.createElement("div");
+    avatar.className = "chat-avatar";
+
+    if (user.avatarType === "photo" && user.avatarValue) {
+      const image = document.createElement("img");
+      image.src = user.avatarValue;
+      image.alt = "";
+      avatar.appendChild(image);
+    } else {
+      avatar.textContent = user.avatarValue || "😎";
+    }
+
+    chip.appendChild(avatar);
+
+    // User name
+    const name = document.createElement("span");
+    const socketId = user.socketId || user.id;
+    const isMe = socketId === socket.id;
+
+    name.textContent = (user.name || "User") + (isMe ? " (You)" : "");
+    chip.appendChild(name);
+
+    // Keep the existing call button
+    if (!isMe) {
+      const callButton = document.createElement("button");
+      callButton.type = "button";
+      callButton.className = "call-user-button";
+      callButton.textContent = "📞 Call";
+      callButton.disabled = callBusy || Boolean(activeCallId);
+
+      callButton.addEventListener("click", () => {
+        startAudioCall(user.userId, user.name || "User");
+      });
+
+      chip.appendChild(callButton);
+      
+const videoButton = document.createElement("button");
+videoButton.type = "button";
+videoButton.className = "call-user-button";
+videoButton.textContent = "📹 Video";
+videoButton.disabled = callBusy || Boolean(activeCallId);
+
+videoButton.addEventListener("click", () => {
+  startAudioCall(user.userId, user.name || "User", "video");
+});
+
+chip.appendChild(videoButton);
+
+    }
+
+    $("onlineUsers").appendChild(chip);
+  });
+});
+
+
+function refreshCallButtons() {
+  const busy = callBusy || Boolean(activeCallId);
+
+  document.querySelectorAll(".call-user-button").forEach(button => {
+    button.disabled = busy;
+  });
+}
+
+async function startAudioCall(targetUserId, targetName, callType = "audio") {
+  if (!myRoom || !socket.connected) {
+    $("audioError").textContent = "Join a room before starting a call.";
+    return;
+  }
+
+  if (!targetUserId) {
+    $("audioError").textContent =
+      "The other member's account ID is missing. Please check the online-user data.";
+    return;
+  }
+
+  if (!["audio", "video"].includes(callType)) {
+    $("audioError").textContent = "Invalid call type.";
+    return;
+  }
+
+  if (callBusy || activeCallId) return;
+
+  currentCallType = callType;
+  callBusy = true;
+  callRole = "caller";
+  outgoingTargetSocketId = targetUserId;
+
+  showCallPanel(
+    (callType === "video" ? "Starting video call with " : "Calling ") +
+    targetName + "…"
+  );
+
+  setCallButtons({end:true});
+  $("audioError").textContent = "";
+  refreshCallButtons();
+
+  socket.emit("start-audio-call", {
+    targetUserId,
+    callType
+  });
+}
+
+/* AUDIO AND VIDEO CALL SIGNALING */
+
+socket.on("audio-call-ringing", data => {
+  activeCallId = data?.callId || activeCallId;
+  callRole = "caller";
+  callBusy = true;
+
+  showCallPanel(
+    currentCallType === "video"
+      ? "Calling member by video…"
+      : "Calling member…"
+  );
+
+  setCallButtons({ end: true });
+  refreshCallButtons();
+});
+
+socket.on("incoming-audio-call", data => {
+  if (!data?.callId) return;
+
+  if (activeCallId || callBusy) {
+    socket.emit("reject-audio-call", { callId: data.callId });
+    return;
+  }
+
+  activeCallId = data.callId;
+  pendingIncomingCall = data;
+  currentCallType = data.callType || "audio";
+  callRole = "callee";
+  callBusy = true;
+
+  const callerName = data.callerName || "A room member";
+
+  showCallPanel(
+    currentCallType === "video"
+      ? callerName + " is video calling you."
+      : callerName + " is calling you."
+  );
+
+  setCallButtons({ accept: true, reject: true });
+  refreshCallButtons();
+});
+
+$("acceptCallButton").addEventListener("click", async () => {
+  if (!pendingIncomingCall || !activeCallId) return;
+
+  $("acceptCallButton").disabled = true;
+  $("rejectCallButton").disabled = true;
+
+  showCallPanel(
+    currentCallType === "video"
+      ? "Requesting camera and microphone access…"
+      : "Requesting microphone access…"
+  );
+
+  try {
+    await prepareCallConnection();
+
+    socket.emit("accept-audio-call", { callId: activeCallId });
+
+    showCallPanel("Call accepted. Connecting…");
+    setCallButtons({ mute: true, end: true });
+  } catch (error) {
+    console.error("Could not access call devices:", error);
+
+    const callId = activeCallId;
+    if (callId) {
+      socket.emit("reject-audio-call", { callId });
+    }
+
+    await closeCall(
+      false,
+      error.message || "Could not access your microphone or camera."
+    );
+  } finally {
+    $("acceptCallButton").disabled = false;
+    $("rejectCallButton").disabled = false;
+  }
+});
+
+$("rejectCallButton").addEventListener("click", async () => {
+  const callId = activeCallId;
+
+  if (callId) {
+    socket.emit("reject-audio-call", { callId });
+  }
+
+  await closeCall(false, "Incoming call declined.");
+});
+
+socket.on("audio-call-accepted", async data => {
+  if (!activeCallId || data?.callId !== activeCallId) return;
+
+  try {
+    showCallPanel(
+      currentCallType === "video"
+        ? "Call accepted. Preparing camera…"
+        : "Call accepted. Preparing audio…"
+    );
+
+    const pc = await prepareCallConnection();
+    const offer = await pc.createOffer();
+
+    await pc.setLocalDescription(offer);
+
+    socket.emit("audio-call-offer", {
+      callId: activeCallId,
+      offer: pc.localDescription
+    });
+
+    setCallButtons({ mute: true, end: true });
+  } catch (error) {
+    console.error("Could not create call offer:", error);
+    await closeCall(true, error.message || "Could not start the call.");
+  }
+});
+
+socket.on("audio-call-ready", data => {
+  if (data?.callId !== activeCallId) return;
+
+  showCallPanel(
+    currentCallType === "video"
+      ? "Accepted. Waiting for video connection…"
+      : "Accepted. Waiting for audio connection…"
+  );
+});
+
+socket.on("audio-call-offer", async data => {
+  if (!data?.offer || data.callId !== activeCallId) return;
+
+  try {
+    const pc = await prepareCallConnection();
+
+    await pc.setRemoteDescription(data.offer);
+    await applyQueuedIceCandidates();
+
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+
+    socket.emit("audio-call-answer", {
+      callId: activeCallId,
+      answer: pc.localDescription
+    });
+
+    showCallPanel(
+      currentCallType === "video"
+        ? "Connecting video…"
+        : "Connecting audio…"
+    );
+
+    setCallButtons({ mute: true, end: true });
+  } catch (error) {
+    console.error("Could not answer call:", error);
+    await closeCall(true, "Could not establish the call connection.");
+  }
+});
+
+socket.on("audio-call-answer", async data => {
+  if (
+    !data?.answer ||
+    data.callId !== activeCallId ||
+    !peerConnection
+  ) return;
+
+  try {
+    await peerConnection.setRemoteDescription(data.answer);
+    await applyQueuedIceCandidates();
+
+    showCallPanel(
+      currentCallType === "video"
+        ? "Video answer received. Connecting…"
+        : "Audio answer received. Connecting…"
+    );
+  } catch (error) {
+    console.error("Could not process call answer:", error);
+    await closeCall(true, "Could not complete the call connection.");
+  }
+});
+
+socket.on("audio-call-ice", async data => {
+  if (!data?.candidate || data.callId !== activeCallId) return;
+
+  if (!peerConnection || !peerConnection.remoteDescription) {
+    queuedIceCandidates.push(data.candidate);
+    return;
+  }
+
+  try {
+    await peerConnection.addIceCandidate(
+      new RTCIceCandidate(data.candidate)
+    );
+  } catch (error) {
+    console.error("Could not add ICE candidate:", error);
+  }
+});
+
+socket.on("audio-call-rejected", async data => {
+  if (data?.callId && data.callId !== activeCallId) return;
+
+  await closeCall(
+    false,
+    data?.message || "The other member declined the call."
+  );
+});
+
+socket.on("audio-call-ended", async data => {
+  if (data?.callId && data.callId !== activeCallId) return;
+
+  await closeCall(false, data?.message || "The call has ended.");
+});
+
+socket.on("call-error", message => {
+  const errorMessage = typeof message === "string"
+    ? message
+    : message?.message || "The call could not be completed.";
+
+  $("audioError").textContent = errorMessage;
+  void closeCall(false);
+});
+
+$("muteCallButton").addEventListener("click", () => {
+  if (!callLocalStream) return;
+
+  callMuted = !callMuted;
+
+  callLocalStream.getAudioTracks().forEach(track => {
+    track.enabled = !callMuted;
+  });
+
+  $("muteCallButton").textContent = callMuted
+    ? "Unmute microphone"
+    : "Mute microphone";
+});
+
+$("endCallButton").addEventListener("click", async () => {
+  await closeCall(true, "You ended the call.");
+});
+
+/* MESSAGES */
+socket.on("chat-history", messages => {
+  $("messages").replaceChildren();
+  messageElements.clear();
+  pendingSeenMessages.clear();
+  (messages || []).forEach(renderMessage);
+  requestAnimationFrame(checkVisibleMessages);
+});
+
+socket.on("new-message", message => {
+  renderMessage(message);
+  if (message.senderId !== socket.id) {
+    requestAnimationFrame(checkVisibleMessages);
+    typingUsers.delete(message.senderId);
+    renderTypingIndicator();
+  }
+});
+
+function checkVisibleMessages() {
+  if (document.hidden || $("chatPanel").classList.contains("hidden") || !myRoom || !socket.connected) return;
+
+  const panel = $("messages").getBoundingClientRect();
+  for (const [id, element] of messageElements) {
+    if (element.dataset.senderId === socket.id || pendingSeenMessages.has(id)) continue;
+    const rect = element.getBoundingClientRect();
+    if (rect.bottom > panel.top && rect.top < panel.bottom &&
+        rect.right > panel.left && rect.left < panel.right) {
+      pendingSeenMessages.add(id);
+      socket.emit("mark-seen", {room:myRoom,messageId:id});
+    }
+  }
+}
+
+$("messages").addEventListener("scroll", checkVisibleMessages);
+document.addEventListener("visibilitychange", checkVisibleMessages);
+
+socket.on("system-message", message => {
+  const el = document.createElement("div");
+  el.className = "system-message";
+  el.textContent = message.text || "Room update";
+  $("messages").appendChild(el);
+  scrollToBottom();
+});
+
+socket.on("message-seen", ({messageId,seenBy}) => {
+  const item = messageElements.get(messageId);
+  const label = item?.querySelector(".seen-label");
+  if (label) label.textContent = "Seen by " + (seenBy || "recipient");
+});
+
+socket.on("message-expired", ({messageId}) => {
+  messageElements.get(messageId)?.remove();
+  messageElements.delete(messageId);
+  pendingSeenMessages.delete(messageId);
+});
+
+socket.on("audio-error", message => {
+  $("audioError").textContent = message || "Unable to send audio.";
+});
+
+function sendTypingState(state) {
+  if (myRoom && socket.connected) socket.emit("typing", {room:myRoom,isTyping:state});
+}
+
+$("messageInput").addEventListener("input", () => {
+  const hasText = $("messageInput").value.trim().length > 0;
+  if (hasText && !isTyping) {
+    isTyping = true;
+    sendTypingState(true);
+  }
+  clearTimeout(typingTimer);
+  if (hasText) {
+    typingTimer = setTimeout(() => {
+      isTyping = false;
+      sendTypingState(false);
+    }, 1200);
+  } else if (isTyping) {
+    isTyping = false;
+    sendTypingState(false);
+  }
+});
+
+$("messageInput").addEventListener("blur", () => {
+  clearTimeout(typingTimer);
+  if (isTyping) {
+    isTyping = false;
+    sendTypingState(false);
+  }
+});
+
+socket.on("user-typing", ({name,socketId,isTyping:active}) => {
+  if (!socketId || socketId === socket.id) return;
+  if (active) typingUsers.set(socketId,name || "Someone");
+  else typingUsers.delete(socketId);
+  renderTypingIndicator();
+});
+
+function renderTypingIndicator() {
+  const names = Array.from(typingUsers.values());
+  $("typingIndicator").replaceChildren();
+  if (!names.length) return;
+
+  const text = document.createElement("span");
+  text.textContent = names.length === 1 ? names[0] + " is typing " :
+    names.length === 2 ? names[0] + " and " + names[1] + " are typing " :
+    "Several people are typing ";
+  const dots = document.createElement("span");
+  dots.textContent = "● ● ●";
+  dots.style.marginLeft = "5px";
+  $("typingIndicator").append(text,dots);
+}
+
+$("messageForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const text = $("messageInput").value.trim();
+  if (!text || !myRoom) return;
+  socket.emit("send-message", {room:myRoom,text});
+  $("messageInput").value = "";
+  clearTimeout(typingTimer);
+  if (isTyping) {
+    isTyping = false;
+    sendTypingState(false);
+  }
+  $("messageInput").focus();
+});
+
+function renderMessage(message) {
+  if (!message || !message.id || messageElements.has(message.id)) return;
+
+  const el = document.createElement("article");
+  el.className = "message" + (message.senderId === socket.id ? " mine" : "");
+  el.dataset.senderId = message.senderId || "";
+
+  // Message header: avatar + sender name
+  const senderRow = document.createElement("div");
+  senderRow.className = "sender-row";
+
+  const avatar = document.createElement("div");
+  avatar.className = "chat-avatar";
+
+  const avatarType = message.senderAvatarType || "emoji";
+  const avatarValue = message.senderAvatarValue || "😎";
+
+  if (avatarType === "photo" && avatarValue.startsWith("data:image/")) {
+    const image = document.createElement("img");
+    image.src = avatarValue;
+    image.alt = "";
+    avatar.appendChild(image);
+  } else {
+    avatar.textContent = avatarType === "emoji" ? avatarValue : "😎";
+  }
+
+  senderRow.appendChild(avatar);
+
+  const sender = document.createElement("div");
+  sender.className = "sender";
+  sender.textContent =
+    message.senderId === socket.id ? "You" : (message.name || "User");
+  senderRow.appendChild(sender);
+
+  el.appendChild(senderRow);
+
+  // Message content
+  if (message.type === "audio" || message.audio) {
+    const audio = document.createElement("audio");
+    audio.controls = true;
+    audio.preload = "metadata";
+
+    try {
+      audio.src = URL.createObjectURL(
+        binaryToBlob(message.audio, message.mimeType)
+      );
+    } catch {
+      const warning = document.createElement("div");
+      warning.textContent = "This audio message could not be loaded.";
+      el.appendChild(warning);
+    }
+
+    el.appendChild(audio);
+  } else {
+    const body = document.createElement("div");
+    body.className = "message-text";
+    body.textContent = message.text || "";
+    el.appendChild(body);
+  }
+
+  // Timestamp
+  const time = document.createElement("div");
+  time.className = "message-time";
+  time.textContent = new Date(
+    message.createdAt || Date.now()
+  ).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+  el.appendChild(time);
+
+  // Seen status for our messages
+  if (message.senderId === socket.id) {
+    const seen = document.createElement("div");
+    seen.className = "seen-label";
+    el.appendChild(seen);
+  }
+
+  messageElements.set(message.id, el);
+  $("messages").appendChild(el);
+  scrollToBottom();
+}
+
+function binaryToBlob(audio,mimeType) {
+  if (audio instanceof Blob) return audio;
+  if (audio instanceof ArrayBuffer || ArrayBuffer.isView(audio)) return new Blob([audio],{type:mimeType || "audio/webm"});
+  if (audio && audio.type === "Buffer" && Array.isArray(audio.data)) return new Blob([new Uint8Array(audio.data)],{type:mimeType || "audio/webm"});
+  throw new Error("Unsupported audio data");
+}
+
+function scrollToBottom() {
+  $("messages").scrollTop = $("messages").scrollHeight;
+}
+
+/* VOICE MESSAGES */
+$("recordButton").addEventListener("click", async () => {
+  $("audioError").textContent = "";
+
+  if (mediaRecorder?.state === "recording") {
+    mediaRecorder.stop();
+    return;
+  }
+  if (recordedBlob) {
+    $("audioError").textContent = "Send or cancel your current recording first.";
+    return;
+  }
+  if (!navigator.mediaDevices?.getUserMedia) {
+    $("audioError").textContent = "Your browser does not support microphone recording.";
+    return;
+  }
+
+  try {
+    audioStream = await navigator.mediaDevices.getUserMedia({audio:true});
+    const options = {};
+    if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) options.mimeType = "audio/webm;codecs=opus";
+    else if (MediaRecorder.isTypeSupported("audio/webm")) options.mimeType = "audio/webm";
+
+    mediaRecorder = new MediaRecorder(audioStream,{...options,audioBitsPerSecond:24000});
+    audioChunks = [];
+    recordingStartedAt = Date.now();
+    mediaRecorder.addEventListener("dataavailable",event => {
+      if (event.data?.size) audioChunks.push(event.data);
+    });
+    mediaRecorder.addEventListener("stop",finishRecording,{once:true});
+    mediaRecorder.start();
+    $("recordButton").textContent = "■ Stop recording";
+    $("recordingStatus").textContent = "Recording... maximum 30 seconds";
+    recordingTimer = setTimeout(() => {
+      if (mediaRecorder?.state === "recording") mediaRecorder.stop();
+    },30000);
+  } catch (error) {
+    console.error(error);
+    $("audioError").textContent = "Microphone access was denied or is unavailable. Check browser permissions.";
+    stopAudioStream();
+  }
+});
+
+function finishRecording() {
+  clearTimeout(recordingTimer);
+  recordingTimer = null;
+  recordedBlob = new Blob(audioChunks,{type:mediaRecorder?.mimeType || "audio/webm"});
+  stopAudioStream();
+  $("recordButton").textContent = "🎙 Record voice";
+  $("recordingStatus").textContent = "Recording ready (" + Math.round((Date.now()-recordingStartedAt)/1000) + " sec)";
+
+  if (recordedBlob.size > MAX_AUDIO_BYTES_LOCAL) {
+    $("audioError").textContent = "Recording is over 1 MB. Record a shorter message.";
+    resetRecording();
+    return;
+  }
+  if (previewUrl) URL.revokeObjectURL(previewUrl);
+  previewUrl = URL.createObjectURL(recordedBlob);
+  $("previewAudio").src = previewUrl;
+  $("previewAudio").style.display = "block";
+  $("sendAudioButton").disabled = false;
+  $("cancelAudioButton").disabled = false;
+}
+
+$("sendAudioButton").addEventListener("click", async () => {
+  if (!recordedBlob || !myRoom) return;
+  try {
+    $("sendAudioButton").disabled = true;
+    $("audioError").textContent = "";
+    const audio = await recordedBlob.arrayBuffer();
+    socket.emit("send-audio",{room:myRoom,audio,mimeType:recordedBlob.type || "audio/webm"});
+    resetRecording();
+  } catch {
+    $("audioError").textContent = "Could not send this recording. Please try again.";
+    $("sendAudioButton").disabled = false;
+  }
+});
+
+$("cancelAudioButton").addEventListener("click",resetRecording);
+
+function stopAudioStream() {
+  if (audioStream) {
+    audioStream.getTracks().forEach(track => track.stop());
+    audioStream = null;
+  }
+}
+
+function resetRecording() {
+  clearTimeout(recordingTimer);
+  recordingTimer = null;
+  if (mediaRecorder?.state === "recording") mediaRecorder.stop();
+  stopAudioStream();
+  recordedBlob = null;
+  audioChunks = [];
+  $("previewAudio").pause();
+  $("previewAudio").removeAttribute("src");
+  $("previewAudio").load();
+  $("previewAudio").style.display = "none";
+  if (previewUrl) {
+    URL.revokeObjectURL(previewUrl);
+    previewUrl = null;
+  }
+  $("sendAudioButton").disabled = true;
+  $("cancelAudioButton").disabled = true;
+  $("recordButton").textContent = "🎙 Record voice";
+  $("recordingStatus").textContent = "";
+}
+
+window.addEventListener("beforeunload", () => {
+  clearTimeout(typingTimer);
+  clearTimeout(recordingTimer);
+  clearInterval(requestRefreshTimer);
+  stopAudioStream();
+  if (previewUrl) URL.revokeObjectURL(previewUrl);
+  void closeCall(false);
+});
+
+async function initializeDashboard() {
+  const authenticated = await loadAccount();
+  if (!authenticated) return;
+  await Promise.all([loadRooms(),loadRequests()]);
+  requestRefreshTimer = setInterval(() => {
+    if (!document.hidden) loadRequests();
+  },15000);
+}
+
+initializeDashboard();
+</script>
+
+</body>
+</html>

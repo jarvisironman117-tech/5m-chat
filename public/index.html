@@ -1,0 +1,495 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#09090f">
+  <meta name="description" content="5M Chat — real-time messaging, voice notes, and private conversations.">
+  <title>5M Chat — Connect in the Moment</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">  
+  <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#7c3aed">
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #09090f;
+      --panel: #111119;
+      --border: #292938;
+      --white: #f8f7ff;
+      --muted: #a3a2b5;
+      --purple: #a78bfa;
+      --light: #c4b5fd;
+      --green: #86efac;
+      --container: 1160px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: radial-gradient(ellipse at 50% -25%, #6d28d91c, transparent 55%), var(--bg);
+      color: var(--white);
+      font-family: "DM Sans", sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--light); outline-offset: 4px; }
+
+    .container { width: min(var(--container), 92%); margin-inline: auto; }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      border-bottom: 1px solid #ffffff0c;
+      background: #09090fe8;
+      backdrop-filter: blur(18px);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+      min-height: 78px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      flex-shrink: 0;
+      font: 700 21px "Space Grotesk", sans-serif;
+      letter-spacing: -.8px;
+    }
+
+    .logo-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid #ffffff27;
+      border-radius: 14px;
+      background: linear-gradient(145deg, #b7a0ff, #7450d9 70%, #5335a5);
+      box-shadow: 0 5px 25px #8b5cf630;
+      color: #100b20;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .logo-name span, .footer-brand span { color: var(--light); }
+
+    .nav-links { display: flex; align-items: center; gap: 31px; color: var(--muted); font-size: 13px; }
+    .nav-links a:hover, .footer-links a:hover { color: var(--white); }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 12px 19px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      transition: transform .2s, background .2s, border-color .2s, box-shadow .2s;
+    }
+
+    .button-primary { background: var(--light); color: #171024; box-shadow: 0 4px 20px #a78bfa12; }
+    .button-primary:hover { transform: translateY(-2px); background: #e4dcff; box-shadow: 0 9px 30px #a78bfa28; }
+    .button-outline { border-color: #ffffff20; background: #ffffff05; color: var(--white); }
+    .button-outline:hover { border-color: #a78bfa85; background: #a78bfa0d; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.03fr .97fr;
+      align-items: center;
+      gap: clamp(35px, 6vw, 78px);
+      min-height: 650px;
+      padding-block: 76px 96px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 27px;
+      padding: 8px 13px;
+      border: 1px solid #a78bfa36;
+      border-radius: 100px;
+      background: #a78bfa0c;
+      color: var(--light);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--light); box-shadow: 0 0 12px #a78bfa9c; }
+
+    h1 {
+      margin-bottom: 24px;
+      font: 600 clamp(49px, 6.4vw, 79px)/1.03 "Space Grotesk", sans-serif;
+      letter-spacing: -.065em;
+    }
+
+    .gradient-text {
+      background: linear-gradient(100deg, #ded5ff, #a78bfa 60%, #8b74ed);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-copy { max-width: 490px; margin-bottom: 30px; color: var(--muted); font-size: 15px; line-height: 1.95; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .fine-print { display: flex; align-items: center; gap: 8px; margin-top: 22px; color: #858499; font-size: 11px; }
+    .fine-print span { color: var(--light); }
+
+    .preview-wrap { position: relative; min-width: 0; padding: 20px 0 25px; isolation: isolate; }
+    .glow { position: absolute; z-index: -1; top: 18%; left: 15%; width: 75%; aspect-ratio: 1; border-radius: 50%; background: #805ad53b; filter: blur(90px); }
+
+    .chat-window {
+      position: relative;
+      overflow: hidden;
+      padding: 22px;
+      border: 1px solid #ffffff19;
+      border-radius: 23px;
+      background: linear-gradient(150deg, #181821, #101017 75%);
+      box-shadow: 0 35px 100px #0008, 0 0 50px #a78bfa0a;
+      transform: rotate(1deg);
+    }
+
+    .window-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+    .person { display: flex; align-items: center; gap: 11px; min-width: 0; }
+    .avatar { display: grid; place-items: center; width: 42px; height: 42px; flex-shrink: 0; border: 1px solid #ffffff20; border-radius: 14px; background: linear-gradient(145deg, #a78bfa, #5140a9); color: white; font-weight: 700; }
+    .person-name { font-size: 13px; font-weight: 700; }
+    .person-sub { color: var(--muted); font-size: 10px; }
+    .window-status { display: flex; align-items: center; gap: 5px; margin-top: 3px; color: var(--green); font-size: 10px; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+    .private-label { color: var(--light); font-size: 11px; white-space: nowrap; }
+
+    .messages { display: flex; flex-direction: column; gap: 17px; padding: 25px 0; }
+    .bubble { max-width: 87%; padding: 12px 14px; border-radius: 15px; font-size: 11px; line-height: 1.8; }
+    .bubble-left { align-self: flex-start; border-bottom-left-radius: 4px; background: #24242e; color: #eeedf8; }
+    .bubble-right { align-self: flex-end; border-bottom-right-radius: 4px; background: linear-gradient(135deg, #8060d7, #6848bc); color: white; }
+    .message-meta { display: flex; justify-content: flex-end; gap: 6px; margin-top: 6px; color: #e5dcff; font-size: 9px; }
+    .timer { display: flex; align-items: center; gap: 6px; margin-top: 7px; color: #e9d5ff; font-size: 9px; }
+    .composer { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border: 1px solid var(--border); border-radius: 12px; color: #858591; font-size: 11px; }
+    .composer-send { display: grid; place-items: center; width: 30px; height: 30px; margin-left: auto; flex-shrink: 0; border-radius: 9px; background: var(--light); color: #171024; }
+
+    .floating-card { position: absolute; right: -13px; bottom: -2px; display: flex; align-items: center; gap: 11px; padding: 13px 16px; border: 1px solid #ffffff1e; border-radius: 14px; background: #191920; box-shadow: 0 15px 45px #0008; }
+    .floating-icon { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; background: #a78bfa19; color: var(--light); font-size: 18px; }
+    .floating-title { font-size: 11px; font-weight: 700; }
+    .floating-sub { margin-top: 2px; color: var(--muted); font-size: 9px; }
+
+    .features { padding-block: 91px; border-top: 1px solid #ffffff0d; border-bottom: 1px solid #ffffff0a; background: linear-gradient(180deg, #0d0d13, #0b0b10); }
+    .section-heading { max-width: 640px; margin: 0 auto 46px; text-align: center; }
+    .section-kicker { margin-bottom: 12px; color: var(--light); font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; }
+
+    .section-heading h2, .cta h2 { margin-bottom: 14px; font: 600 clamp(31px, 4.2vw, 45px)/1.18 "Space Grotesk", sans-serif; letter-spacing: -.045em; }
+    .section-heading p, .feature-card p { color: var(--muted); font-size: 13px; line-height: 1.9; }
+    .feature-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 17px; }
+
+    .feature-card { min-width: 0; padding: 27px; border: 1px solid var(--border); border-radius: 17px; background: linear-gradient(145deg, #16161f, #101016); transition: transform .25s, border-color .25s; }
+    .feature-card:hover { transform: translateY(-4px); border-color: #a78bfa65; }
+    .feature-icon { display: grid; place-items: center; width: 45px; height: 45px; margin-bottom: 22px; border: 1px solid #a78bfa20; border-radius: 13px; background: #a78bfa12; color: var(--light); font-size: 19px; }
+    .feature-card h3 { margin-bottom: 9px; font: 600 17px "Space Grotesk", sans-serif; letter-spacing: -.3px; }
+    .feature-card p { font-size: 12px; }
+
+    .cta {
+      position: relative;
+      overflow: hidden;
+      width: min(var(--container), 92%);
+      margin: 76px auto;
+      padding: 60px 24px;
+      border: 1px solid #a78bfa35;
+      border-radius: 24px;
+      background: radial-gradient(ellipse at 50% 0%, #a78bfa20, transparent 65%), #111119;
+      text-align: center;
+    }
+
+    .cta h2 { margin-bottom: 13px; }
+    .cta h2 span { color: var(--light); }
+    .cta p { max-width: 470px; margin: 0 auto 25px; color: var(--muted); font-size: 13px; line-height: 1.9; }
+
+    footer { border-top: 1px solid #ffffff10; padding: 25px 4%; color: #89889c; font-size: 11px; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; width: min(var(--container), 100%); margin: auto; }
+    .footer-brand { color: var(--white); font: 700 17px "Space Grotesk", sans-serif; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 18px; }
+
+    #authStatus { min-height: 18px; margin-top: 12px; color: var(--muted); font-size: 12px; text-align: center; }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 38px; padding-block: 66px 80px; }
+      .hero-copy { max-width: 600px; }
+      .preview-wrap { width: min(530px, 94%); margin-inline: auto; }
+      .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .nav-links { gap: 18px; }
+    }
+
+    @media (max-width: 600px) {
+      .nav-inner { min-height: 69px; gap: 10px; }
+      .logo { gap: 8px; font-size: 18px; }
+      .logo-icon { width: 37px; height: 37px; border-radius: 12px; }
+      .nav-links { display: none; }
+      .nav-inner > .button { min-height: 40px; padding: 9px 12px; font-size: 11px; }
+      .hero { min-height: auto; padding-block: 56px 68px; }
+      h1 { font-size: clamp(47px, 13vw, 66px); letter-spacing: -.06em; }
+      .hero-copy { font-size: 14px; }
+      .hero-actions .button { flex: 1 1 auto; }
+      .chat-window { padding: 16px; border-radius: 19px; }
+      .floating-card { right: -8px; }
+      .features { padding-block: 66px; }
+      .feature-grid { grid-template-columns: 1fr; gap: 13px; }
+      .feature-card { padding: 23px; }
+      .section-heading { margin-bottom: 32px; }
+      .cta { margin-block: 45px; padding: 42px 20px; border-radius: 19px; }
+      .footer-inner { justify-content: center; text-align: center; }
+      .footer-links { justify-content: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a class="logo" href="/" aria-label="5M Chat homepage">
+        <span class="logo-icon" aria-hidden="true">5M</span>
+        <span class="logo-name">5M <span>CHAT</span></span>
+      </a>
+
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">Preview</a>
+        <a href="#about">Our idea</a>
+      </nav>
+
+      <button class="button button-primary" type="button" data-enter-chat>
+        Start chatting <span aria-hidden="true">↗</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero container" id="about">
+      <div class="hero-content">
+        <div class="eyebrow">
+          <span class="live-dot" aria-hidden="true"></span>
+          A fresh way to connect
+        </div>
+
+        <h1>Conversations<br>without the<br><span class="gradient-text">extra noise.</span></h1>
+
+        <p class="hero-copy">
+          Meet a simpler way to connect. Send real-time messages, share
+          voice notes, see who's online, and enjoy conversations designed
+          to feel focused, lightweight, and refreshingly simple.
+        </p>
+
+        <div class="hero-actions">
+          <button class="button button-primary" type="button" data-enter-chat>
+            Get started <span aria-hidden="true">→</span>
+          </button>
+          <a class="button button-outline" href="#features">Explore features <span aria-hidden="true">↓</span></a>
+        </div>
+
+        <p class="fine-print"><span aria-hidden="true">✦</span> Built around simple, real-time conversations.</p>
+        <p id="authStatus" role="status" aria-live="polite"></p>
+      </div>
+
+      <div class="preview-wrap" id="how-it-works" aria-label="Illustrative chat preview">
+        <div class="glow" aria-hidden="true"></div>
+
+        <div class="chat-window">
+          <div class="window-head">
+            <div class="person">
+              <div class="avatar" aria-hidden="true">A</div>
+              <div>
+                <div class="person-name">Alex Morgan</div>
+                <div class="window-status"><span class="status-dot" aria-hidden="true"></span>Online</div>
+              </div>
+            </div>
+            <div class="private-label">Chat preview</div>
+          </div>
+
+          <div class="messages">
+            <div class="bubble bubble-left">Hey! Are we still meeting this evening?</div>
+            <div class="bubble bubble-right">
+              Absolutely! See you at 6. 😊
+              <div class="timer"><span aria-hidden="true">◷</span><span>5-minute timer after seen</span></div>
+              <div class="message-meta"><span>Illustrative preview</span></div>
+            </div>
+            <div class="bubble bubble-left">Perfect. Talk soon!</div>
+          </div>
+
+          <div class="composer" aria-hidden="true">
+            <span>＋</span><span>Write a message...</span><span class="composer-send">➤</span>
+          </div>
+        </div>
+
+        <div class="floating-card">
+          <div class="floating-icon" aria-hidden="true">◷</div>
+          <div>
+            <div class="floating-title">Stay in the moment</div>
+            <div class="floating-sub">Less clutter. More conversation.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features" id="features">
+      <div class="container">
+        <div class="section-heading">
+          <div class="section-kicker">Made for conversations</div>
+          <h2>Simple by design.<br>Connected in real time.</h2>
+          <p>The essentials for a more focused chat experience, brought together in one clean and modern interface.</p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">◷</div>
+            <h3>Messages that disappear</h3>
+            <p>Messages can expire five minutes after they are marked as seen by another participant.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">↗</div>
+            <h3>Real-time conversations</h3>
+            <p>Send and receive messages instantly without refreshing the page.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">♫</div>
+            <h3>Voice messages</h3>
+            <p>Record and send short audio messages directly in your chat room.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">◉</div>
+            <h3>Online presence</h3>
+            <p>See who's currently connected to your chat room.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">✎</div>
+            <h3>Typing indicators</h3>
+            <p>Know when someone is typing and keep conversations flowing naturally.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">✓</div>
+            <h3>Seen indicators</h3>
+            <p>See when a message has been marked as seen by another participant.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <h2>Ready to start a<br><span>better conversation?</span></h2>
+      <p>Step into 5M Chat and experience a fresh approach to real-time messaging.</p>
+      <button class="button button-primary" type="button" data-enter-chat>
+        Enter 5M Chat <span aria-hidden="true">→</span>
+      </button>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <a class="footer-brand" href="/" aria-label="5M Chat homepage">5M <span>CHAT</span></a>
+      <div>Connect in the moment.</div>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
+      </nav>
+      <div>© <span id="year"></span> 5M Chat</div>
+    </div>
+  </footer>
+
+  <script>
+    "use strict";
+
+    const LOGIN_PAGE = "/login.html";
+    const CHAT_PAGE = "/chat.html";
+    const statusMessage = document.getElementById("authStatus");
+
+    let sessionCheck = null;
+
+    async function checkSession() {
+      if (!sessionCheck) {
+        sessionCheck = fetch("/api/auth/me", {
+          method: "GET",
+          credentials: "same-origin",
+          headers: { "Accept": "application/json" },
+          cache: "no-store"
+        }).then(async response => {
+          if (!response.ok) return false;
+
+          const data = await response.json();
+
+          // A successful response from this authenticated endpoint
+          // means the browser already has a valid login session.
+          return data && (
+            data.user ||
+            data.email ||
+            data.id ||
+            data._id ||
+            data.success === true
+          ) ? true : false;
+        }).catch(() => false);
+      }
+
+      return sessionCheck;
+    }
+
+    async function enterChat() {
+      statusMessage.textContent = "Checking your account...";
+
+      const loggedIn = await checkSession();
+
+      if (loggedIn) {
+        window.location.assign(CHAT_PAGE);
+      } else {
+        window.location.assign(LOGIN_PAGE);
+      }
+    }
+
+    document.querySelectorAll("[data-enter-chat]").forEach(button => {
+      button.addEventListener("click", enterChat);
+    });
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Returning users with an active session skip the landing page.
+    (async function redirectLoggedInUser() {
+      const loggedIn = await checkSession();
+
+      if (loggedIn) {
+        window.location.replace(CHAT_PAGE);
+      }
+    })();
+  </script>
+  
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/sw.js")
+        .then(() => console.log("5M Chat service worker registered"))
+        .catch((error) => {
+          console.error("Service worker registration failed:", error);
+        });
+    });
+  }
+</script>
+
+</body>
+</html>

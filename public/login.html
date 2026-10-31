@@ -1,0 +1,199 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <title>Login | 5M Chat</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+      color: #f5f3ff;
+      background: #100d1d;
+    }
+    .card {
+      width: 100%;
+      max-width: 420px;
+      padding: 32px;
+      background: #1b1630;
+      border: 1px solid #393052;
+      border-radius: 22px;
+      box-shadow: 0 20px 60px #0005;
+    }
+    .logo { font-size: 25px; font-weight: 800; }
+    .logo span { color: #b69aff; }
+    h1 { margin-bottom: 8px; }
+    .sub { color: #b8b0ca; line-height: 1.5; }
+    label { display: block; margin: 17px 0 7px; }
+    input {
+      width: 100%;
+      padding: 13px;
+      color: white;
+      background: #100d1d;
+      border: 1px solid #493d65;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+    input:focus { outline: 2px solid #9c7bff; }
+    button {
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      border: 0;
+      border-radius: 10px;
+      color: #fff;
+      background: #8058ee;
+      font-weight: 700;
+      font-size: 15px;
+    }
+    button:disabled { opacity: .6; cursor: wait; }
+    .switch {
+      margin-top: 20px;
+      text-align: center;
+      color: #c9c1da;
+    }
+    .switch button {
+      width: auto;
+      margin: 0;
+      padding: 5px;
+      color: #c1aaff;
+      background: none;
+    }
+    #message { margin-top: 15px; line-height: 1.5; }
+    .error { color: #ff9eaa; }
+    .success { color: #9ee6c0; }
+    .back { display: block; margin-top: 22px; color: #c1aaff; text-align: center; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="logo">5M <span>Chat</span></div>
+    <h1 id="heading">Welcome back</h1>
+    <p class="sub" id="description">Log in to continue your conversations.</p>
+
+    <form id="authForm">
+      <div id="nameField" hidden>
+        <label for="name">Display name</label>
+        <input id="name" name="name" autocomplete="name" minlength="2" maxlength="30">
+      </div>
+
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" autocomplete="email" required maxlength="254">
+
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password"
+        autocomplete="current-password" required minlength="8" maxlength="72">
+
+      <button id="submitButton" type="submit">Log in</button>
+    </form>
+
+    <div id="message" role="status" aria-live="polite"></div>
+
+    <div class="switch">
+      <span id="switchText">New to 5M Chat?</span>
+      <button id="switchButton" type="button">Create account</button>
+    </div>
+
+    <a class="back" href="/">← Back to home</a>
+  </main>
+
+  <script>
+    const form = document.getElementById("authForm");
+    const nameField = document.getElementById("nameField");
+    const nameInput = document.getElementById("name");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const heading = document.getElementById("heading");
+    const description = document.getElementById("description");
+    const submitButton = document.getElementById("submitButton");
+    const switchText = document.getElementById("switchText");
+    const switchButton = document.getElementById("switchButton");
+    const message = document.getElementById("message");
+
+    let mode = "login";
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      const registering = mode === "register";
+
+      heading.textContent = registering ? "Create your account" : "Welcome back";
+      description.textContent = registering
+        ? "Join 5M Chat and start a conversation."
+        : "Log in to continue your conversations.";
+      nameField.hidden = !registering;
+      nameInput.required = registering;
+      passwordInput.autocomplete = registering ? "new-password" : "current-password";
+      submitButton.textContent = registering ? "Create account" : "Log in";
+      switchText.textContent = registering
+        ? "Already have an account?"
+        : "New to 5M Chat?";
+      switchButton.textContent = registering ? "Log in" : "Create account";
+      message.textContent = "";
+      message.className = "";
+    }
+
+    switchButton.addEventListener("click", () => {
+      setMode(mode === "login" ? "register" : "login");
+    });
+
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      submitButton.disabled = true;
+      message.textContent = "Please wait...";
+      message.className = "";
+
+      const body = {
+        email: emailInput.value.trim(),
+        password: passwordInput.value
+      };
+
+      if (mode === "register") {
+        body.name = nameInput.value.trim();
+      }
+
+      try {
+        const response = await fetch(`/api/auth/${mode}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify(body)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || "Something went wrong.");
+        }
+
+        message.textContent = "Success! Opening your chat...";
+        message.className = "success";
+        window.location.assign("/chat.html");
+      } catch (error) {
+        message.textContent = error.message || "Could not connect to the server.";
+        message.className = "error";
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+  </script>
+  
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/sw.js")
+        .then(() => console.log("5M Chat service worker registered"))
+        .catch((error) => console.error("Service worker error:", error));
+    });
+  }
+</script>
+
+</body>
+</html>
