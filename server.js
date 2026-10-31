@@ -12,6 +12,7 @@ const MongoStore = require("connect-mongo").default;
 const { Server } = require("socket.io");
 
 const app = express();
+app.set("trust proxy", 1);
 const server = http.createServer(app);
 const io = new Server(server, { maxHttpBufferSize: 2_000_000 });
 
