@@ -650,7 +650,6 @@ app.get("/api/rooms", requireAuth, async (req, res) => {
     });
   }
 });
-
 app.delete("/api/rooms/:id", requireAuth, async (req, res) => {
   try {
     const room = await PrivateRoom.findById(req.params.id);
@@ -662,6 +661,7 @@ app.delete("/api/rooms/:id", requireAuth, async (req, res) => {
       });
     }
 
+    // Only the room owner can delete it.
     if (String(room.ownerId) !== String(req.session.userId)) {
       return res.status(403).json({
         success: false,
@@ -669,18 +669,63 @@ app.delete("/api/rooms/:id", requireAuth, async (req, res) => {
       });
     }
 
+    const roomCode = room.code;
+    const roomId = String(room._id);
+
+    // Delete database records.
     await Promise.all([
-      Message.deleteMany({ room: room.code }),
+      Message.deleteMany({ room: roomCode }),
       RoomRequest.deleteMany({ roomId: room._id }),
       PrivateRoom.deleteOne({ _id: room._id })
     ]);
 
-    io.emit("room-deleted", { roomId: String(room._id) });
+    // Clear message-expiry timers for this room.
+    for (const [key, timer] of expiryTimers.entries()) {
+      if (key.startsWith(`${roomCode}:`)) {
+        clearTimeout(timer);
+        expiryTimers.delete(key);
+      }
+    }
+
+    // Remove cached messages.
+    rooms.delete(roomCode);
+
+    // End active calls belonging to this room.
+    for (const [callId, call] of activeCalls.entries()) {
+      if (call.room === roomCode) {
+        activeCalls.delete(callId);
+
+        io.to(call.callerSocketId).emit("audio-call-ended", {
+          callId,
+          message: "This room has been deleted."
+        });
+
+        io.to(call.calleeSocketId).emit("audio-call-ended", {
+          callId,
+          message: "This room has been deleted."
+        });
+      }
+    }
+
+    // Remove connected users from the deleted room.
+    const connectedSockets = await io.in(roomCode).fetchSockets();
+
+    for (const connectedSocket of connectedSockets) {
+      connectedSocket.data.room = null;
+      connectedSocket.data.roomAuthorized = false;
+      connectedSocket.data.roomName = null;
+
+      await connectedSocket.leave(roomCode);
+    }
+
+    // Notify all connected clients.
+    io.emit("room-deleted", { roomId });
 
     return res.json({
       success: true,
       message: "Room deleted successfully."
     });
+
   } catch (error) {
     console.error("Delete room error:", error.message);
 
@@ -1190,6 +1235,11 @@ io.on("connection", socket => {
   });
 
   socket.on("send-message", async ({ room, text } = {}) => {
+    console.log("SEND MESSAGE EVENT:", {
+  room,
+  user: socket.data.userId,
+  text
+});
     const currentRoom = socket.data.room;
     const messageText = String(text || "").trim();
 
@@ -1395,13 +1445,12 @@ io.on("connection", socket => {
   room,
   callType
 });
-
-      target.emit("incoming-audio-call", {
-        callId,
-        callerId,
-        callerName: socket.data.name
-      });
-
+target.emit("incoming-audio-call", {
+  callId,
+  callerId,
+  callerName: socket.data.name,
+  callType
+});
       socket.emit("audio-call-ringing", { callId, targetUserId: targetId });
     } catch (error) {
       console.error("Start-call error:", error.message);

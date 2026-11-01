@@ -637,9 +637,11 @@ currentCallType = "audio";
   setCallButtons();
   $("callPanel").classList.add("hidden");
 
-  if (message) {
+    if (message) {
     $("audioError").textContent = message;
   }
+
+  refreshCallButtons();
 }
 
 function showNotice(message, isError = false) {
@@ -1086,12 +1088,19 @@ $("refreshRequests").addEventListener("click", loadRequests);
 function enterRoom(code) {
   myRoom = String(code || "").trim().toUpperCase();
   if (!myRoom) return;
+
   if (!socket.connected) {
     showNotice("Connecting to the chat server. Please try again in a moment.", true);
     return;
   }
+
   joiningRoom = true;
   displayDashboardError("");
+
+  $("messages").replaceChildren();
+  messageElements.clear();
+  pendingSeenMessages.clear();
+
   socket.emit("join-chat", {room:myRoom});
 }
 
@@ -1167,9 +1176,6 @@ socket.on("joined-chat", ({name, room, roomName}) => {
   $("dashboard").classList.add("hidden");
   $("chatPanel").classList.remove("hidden");
   $("status").textContent = "In chat";
-  $("messages").replaceChildren();
-  messageElements.clear();
-  pendingSeenMessages.clear();
   $("messageInput").focus();
   requestAnimationFrame(checkVisibleMessages);
 });
