@@ -4,105 +4,447 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0718">
   <link rel="manifest" href="/manifest.json">
   <title>Login | 5M Chat</title>
+
   <style>
     * { box-sizing: border-box; }
+
+    :root {
+      --purple: #9b70ff;
+      --light-purple: #c7adff;
+      --background: #0b0718;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
       display: grid;
       place-items: center;
       padding: 24px;
+      overflow-x: hidden;
       font-family: Arial, sans-serif;
-      color: #f5f3ff;
-      background: #100d1d;
+      color: #f8f5ff;
+      background:
+        radial-gradient(ellipse at 50% 45%, #29154f 0%, transparent 55%),
+        radial-gradient(ellipse at 10% 10%, #211044 0%, transparent 45%),
+        var(--background);
+      perspective: 1200px;
     }
-    .card {
+
+    .background {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .grid {
+      position: absolute;
+      width: 150%;
+      height: 70%;
+      left: -25%;
+      bottom: -35%;
+      background-image:
+        linear-gradient(#9b70ff18 1px, transparent 1px),
+        linear-gradient(90deg, #9b70ff18 1px, transparent 1px);
+      background-size: 55px 55px;
+      transform: perspective(400px) rotateX(60deg);
+      mask-image: linear-gradient(transparent, black);
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(2px);
+      animation: float 9s ease-in-out infinite;
+    }
+
+    .orb.one {
+      width: 190px;
+      height: 190px;
+      top: 10%;
+      left: 10%;
+      background: radial-gradient(circle at 30% 30%, #d0b5ff, #7540e9 45%, #32115f);
+      box-shadow: 0 0 100px #8b5cf688;
+    }
+
+    .orb.two {
+      width: 130px;
+      height: 130px;
+      right: 12%;
+      bottom: 12%;
+      background: radial-gradient(circle at 30% 30%, #e0caff, #7442d9 50%, #29104e);
+      box-shadow: 0 0 90px #8b5cf677;
+      animation-delay: -4s;
+    }
+
+    .orb.three {
+      width: 65px;
+      height: 65px;
+      right: 22%;
+      top: 17%;
+      background: radial-gradient(circle at 30% 30%, #e5d8ff, #8755f3);
+      box-shadow: 0 0 55px #a78bfa99;
+      animation-delay: -2s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate3d(0, 0, 0); }
+      50% { transform: translate3d(0, -28px, 35px); }
+    }
+
+    .scene {
       width: 100%;
-      max-width: 420px;
-      padding: 32px;
-      background: #1b1630;
-      border: 1px solid #393052;
-      border-radius: 22px;
-      box-shadow: 0 20px 60px #0005;
+      max-width: 440px;
+      perspective: 1100px;
     }
-    .logo { font-size: 25px; font-weight: 800; }
-    .logo span { color: #b69aff; }
-    h1 { margin-bottom: 8px; }
-    .sub { color: #b8b0ca; line-height: 1.5; }
-    label { display: block; margin: 17px 0 7px; }
+
+    .card {
+      position: relative;
+      width: 100%;
+      padding: 38px 34px;
+      border: 1px solid #b99aff45;
+      border-radius: 26px;
+      background:
+        linear-gradient(145deg, #ffffff12, transparent 45%),
+        linear-gradient(145deg, #21183b, #120d22 75%);
+      box-shadow:
+        0 35px 90px #0009,
+        0 12px 35px #7540e933,
+        inset 0 1px 1px #ffffff25,
+        inset 0 -1px 1px #0008;
+      transform: rotateX(2deg) rotateY(-2deg);
+      transition: transform .35s ease, box-shadow .35s ease;
+      animation: cardAppear 1s ease both;
+    }
+
+    .card:hover {
+      transform: rotateX(0deg) rotateY(0deg) translateY(-5px);
+      box-shadow:
+        0 45px 100px #000b,
+        0 15px 45px #7540e955,
+        inset 0 1px 1px #ffffff30;
+    }
+
+    @keyframes cardAppear {
+      from {
+        opacity: 0;
+        transform: translateY(35px) rotateX(12deg);
+      }
+      to {
+        opacity: 1;
+        transform: rotateX(2deg) rotateY(-2deg);
+      }
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(
+        135deg,
+        #d8c4ff88,
+        transparent 35%,
+        #8b5cf633 70%,
+        #d8c4ff55
+      );
+      mask: linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 27px;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    .logo-icon {
+      display: grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      border-radius: 13px;
+      background: linear-gradient(145deg, #b99aff, #7040d8);
+      box-shadow:
+        0 7px 18px #8b5cf655,
+        inset 0 2px 3px #ffffff70,
+        inset 0 -3px 5px #32106c;
+    }
+
+    .logo span { color: var(--light-purple); }
+
+    .tagline {
+      margin: 8px 0 30px;
+      color: #a99cbe;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0 0 9px;
+      font-size: 29px;
+      letter-spacing: -.7px;
+    }
+
+    .sub {
+      margin: 0 0 25px;
+      color: #b8aecb;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      margin: 17px 0 8px;
+      color: #e5dcf5;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
     input {
       width: 100%;
-      padding: 13px;
+      padding: 15px;
       color: white;
-      background: #100d1d;
-      border: 1px solid #493d65;
-      border-radius: 10px;
+      background: #0d0919;
+      border: 1px solid #493b67;
+      border-radius: 12px;
       font-size: 15px;
+      transition: .25s ease;
+      box-shadow: inset 0 3px 8px #0005;
     }
-    input:focus { outline: 2px solid #9c7bff; }
+
+    input::placeholder { color: #716783; }
+
+    input:focus {
+      outline: none;
+      border-color: #a78bfa;
+      box-shadow:
+        0 0 0 3px #8b5cf622,
+        0 0 20px #8b5cf622,
+        inset 0 3px 8px #0005;
+    }
+
     button {
       cursor: pointer;
       width: 100%;
-      margin-top: 20px;
-      padding: 14px;
-      border: 0;
-      border-radius: 10px;
-      color: #fff;
-      background: #8058ee;
-      font-weight: 700;
+      margin-top: 23px;
+      padding: 15px;
+      border: 1px solid #c7adff66;
+      border-radius: 12px;
+      color: white;
+      background: linear-gradient(135deg, #a17aff, #7040d8);
       font-size: 15px;
+      font-weight: 800;
+      letter-spacing: .3px;
+      box-shadow:
+        0 8px 0 #43218c,
+        0 14px 28px #7540e955,
+        inset 0 1px 2px #ffffff77;
+      transition: transform .2s ease, box-shadow .2s ease;
     }
-    button:disabled { opacity: .6; cursor: wait; }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow:
+        0 11px 0 #43218c,
+        0 19px 32px #7540e977,
+        inset 0 1px 2px #ffffff88;
+    }
+
+    button:active {
+      transform: translateY(5px);
+      box-shadow:
+        0 3px 0 #43218c,
+        0 7px 15px #7540e944;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: wait;
+      transform: none;
+    }
+
     .switch {
-      margin-top: 20px;
+      margin-top: 27px;
       text-align: center;
-      color: #c9c1da;
+      color: #bcb2cf;
+      font-size: 13px;
     }
+
     .switch button {
       width: auto;
       margin: 0;
-      padding: 5px;
-      color: #c1aaff;
+      padding: 5px 7px;
+      border: 0;
+      color: #c6aaff;
       background: none;
+      box-shadow: none;
+      font-size: 13px;
     }
-    #message { margin-top: 15px; line-height: 1.5; }
+
+    .switch button:hover {
+      transform: none;
+      text-decoration: underline;
+    }
+
+    #message {
+      margin-top: 17px;
+      line-height: 1.5;
+      font-size: 13px;
+      text-align: center;
+    }
+
     .error { color: #ff9eaa; }
     .success { color: #9ee6c0; }
-    .back { display: block; margin-top: 22px; color: #c1aaff; text-align: center; }
+
+    .back {
+      display: block;
+      margin-top: 25px;
+      color: #bda6ef;
+      text-align: center;
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    .back:hover { color: white; }
+
+    .bottom-note {
+      margin-top: 25px;
+      text-align: center;
+      color: #746985;
+      font-size: 11px;
+      letter-spacing: .4px;
+    }
+
+    [hidden] { display: none !important; }
+
+    @media (max-width: 520px) {
+      body { padding: 18px; }
+
+      .card {
+        padding: 30px 23px;
+        transform: none;
+      }
+
+      .card:hover { transform: translateY(-3px); }
+      h1 { font-size: 26px; }
+
+      .orb.one {
+        width: 110px;
+        height: 110px;
+      }
+
+      .orb.two {
+        width: 90px;
+        height: 90px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
   </style>
 </head>
-<body>
-  <main class="card">
-    <div class="logo">5M <span>Chat</span></div>
-    <h1 id="heading">Welcome back</h1>
-    <p class="sub" id="description">Log in to continue your conversations.</p>
 
-    <form id="authForm">
-      <div id="nameField" hidden>
-        <label for="name">Display name</label>
-        <input id="name" name="name" autocomplete="name" minlength="2" maxlength="30">
+<body>
+
+  <div class="background">
+    <div class="grid"></div>
+    <div class="orb one"></div>
+    <div class="orb two"></div>
+    <div class="orb three"></div>
+  </div>
+
+  <main class="scene">
+    <section class="card">
+
+      <div class="logo">
+        <div class="logo-icon">5M</div>
+        <div>5M <span>Chat</span></div>
       </div>
 
-      <label for="email">Email</label>
-      <input id="email" name="email" type="email" autocomplete="email" required maxlength="254">
+      <p class="tagline">Talk freely. Time disappears.</p>
 
-      <label for="password">Password</label>
-      <input id="password" name="password" type="password"
-        autocomplete="current-password" required minlength="8" maxlength="72">
+      <h1 id="heading">Welcome back</h1>
 
-      <button id="submitButton" type="submit">Log in</button>
-    </form>
+      <p class="sub" id="description">
+        Log in to continue your conversations.
+      </p>
 
-    <div id="message" role="status" aria-live="polite"></div>
+      <form id="authForm">
 
-    <div class="switch">
-      <span id="switchText">New to 5M Chat?</span>
-      <button id="switchButton" type="button">Create account</button>
-    </div>
+        <div id="nameField" hidden>
+          <label for="name">Display name</label>
+          <input
+            id="name"
+            name="name"
+            autocomplete="name"
+            minlength="2"
+            maxlength="30"
+            placeholder="Enter your name"
+          >
+        </div>
 
-    <a class="back" href="/">← Back to home</a>
+        <label for="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          required
+          maxlength="254"
+          placeholder="you@example.com"
+        >
+
+        <label for="password">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          required
+          minlength="8"
+          maxlength="72"
+          placeholder="Enter your password"
+        >
+
+        <button id="submitButton" type="submit">
+          Log in
+        </button>
+
+      </form>
+
+      <div id="message" role="status" aria-live="polite"></div>
+
+      <div class="switch">
+        <span id="switchText">New to 5M Chat?</span>
+        <button id="switchButton" type="button">
+          Create account
+        </button>
+      </div>
+
+      <a class="back" href="/">← Back to home</a>
+
+      <div class="bottom-note">
+        PRIVATE ROOMS · TEMPORARY MESSAGES
+      </div>
+
+    </section>
   </main>
 
   <script>
@@ -122,20 +464,36 @@
 
     function setMode(nextMode) {
       mode = nextMode;
+
       const registering = mode === "register";
 
-      heading.textContent = registering ? "Create your account" : "Welcome back";
+      heading.textContent = registering
+        ? "Create your account"
+        : "Welcome back";
+
       description.textContent = registering
         ? "Join 5M Chat and start a conversation."
         : "Log in to continue your conversations.";
+
       nameField.hidden = !registering;
       nameInput.required = registering;
-      passwordInput.autocomplete = registering ? "new-password" : "current-password";
-      submitButton.textContent = registering ? "Create account" : "Log in";
+
+      passwordInput.autocomplete = registering
+        ? "new-password"
+        : "current-password";
+
+      submitButton.textContent = registering
+        ? "Create account"
+        : "Log in";
+
       switchText.textContent = registering
         ? "Already have an account?"
         : "New to 5M Chat?";
-      switchButton.textContent = registering ? "Log in" : "Create account";
+
+      switchButton.textContent = registering
+        ? "Log in"
+        : "Create account";
+
       message.textContent = "";
       message.className = "";
     }
@@ -146,6 +504,7 @@
 
     form.addEventListener("submit", async event => {
       event.preventDefault();
+
       submitButton.disabled = true;
       message.textContent = "Please wait...";
       message.className = "";
@@ -162,7 +521,9 @@
       try {
         const response = await fetch(`/api/auth/${mode}`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json"
+          },
           credentials: "same-origin",
           body: JSON.stringify(body)
         });
@@ -175,25 +536,30 @@
 
         message.textContent = "Success! Opening your chat...";
         message.className = "success";
+
         window.location.assign("/chat.html");
+
       } catch (error) {
-        message.textContent = error.message || "Could not connect to the server.";
+        message.textContent =
+          error.message || "Could not connect to the server.";
+
         message.className = "error";
+
       } finally {
         submitButton.disabled = false;
       }
     });
   </script>
-  
-<script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("/sw.js")
-        .then(() => console.log("5M Chat service worker registered"))
-        .catch((error) => console.error("Service worker error:", error));
-    });
-  }
-</script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js")
+          .then(() => console.log("5M Chat service worker registered"))
+          .catch(error => console.error("Service worker error:", error));
+      });
+    }
+  </script>
 
 </body>
 </html>
