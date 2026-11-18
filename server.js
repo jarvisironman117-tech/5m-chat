@@ -80,25 +80,31 @@ const messageSchema = new mongoose.Schema({
 messageSchema.index({ room: 1, createdAt: -1 });
 messageSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 const Message = mongoose.model("Message", messageSchema);
-
 // ---------------- SESSIONS ----------------
+
 if (!process.env.SESSION_SECRET) {
   throw new Error("SESSION_SECRET is missing from your .env file.");
 }
+
 if (!process.env.MONGODB_URI) {
   throw new Error("MONGODB_URI is missing from your .env file.");
 }
+
+// Trust Render's reverse proxy for HTTPS cookies
+app.set("trust proxy", 1);
 
 const sessionMiddleware = session({
   name: "fiveMChat.sid",
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+
   store: MongoStore.create({
     mongoUrl: process.env.MONGODB_URI,
     collectionName: "sessions",
     ttl: 7 * 24 * 60 * 60
   }),
+
   cookie: {
     httpOnly: true,
     sameSite: "lax",
@@ -106,15 +112,15 @@ const sessionMiddleware = session({
     maxAge: 7 * 24 * 60 * 60 * 1000
   }
 });
+
 app.use(sessionMiddleware);
 io.engine.use(sessionMiddleware);
-
 // ---------------- HELPERS ----------------
 function requireAuth(req, res, next) {
   if (!req.session || !req.session.userId) {
     if (req.path.startsWith("/api/")) {
       return res.status(401).json({ success: false, message: "Please log in." });
-    }
+    }cookie:
     return res.redirect("/login.html");
   }
   next();
