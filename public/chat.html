@@ -932,6 +932,34 @@ button.secondary { background:rgba(63,48,91,.78); }
   }
 }
 
+/* Mobile message input visibility fix */
+@media (max-width: 600px) {
+  #messageForm {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center;
+    gap: 8px;
+  }
+
+  #messageInput {
+    display: block !important;
+    flex: 1 1 0% !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    color: #faf7ff !important;
+    -webkit-text-fill-color: #faf7ff !important;
+    caret-color: #faf7ff !important;
+    background: rgba(8, 6, 19, .85) !important;
+    opacity: 1 !important;
+  }
+
+  #sendButton {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 72px;
+  }
+}
+
 </style>
 </head>
 <body>

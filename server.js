@@ -263,58 +263,64 @@ async function addMessage(room, message) {
 }
 
 // ---------------- AUTH API ----------------
+
 app.post("/api/auth/register", async (req, res) => {
   try {
     const name = cleanName(req.body.name);
     const email = String(req.body.email || "").trim().toLowerCase();
     const password = String(req.body.password || "");
-    if (!name || name === "Guest" || name.length < 2 || !validEmail(email) || email.length > 254 || password.length < 8 || Buffer.byteLength(password, "utf8") > 72) {
-      return res.status(400).json({ success: false, message: "Enter a name of 2–30 characters, a valid email, and a password of 8–72 bytes." });
+
+    if (
+      !name ||
+      name === "Guest" ||
+      name.length < 2 ||
+      !validEmail(email) ||
+      email.length > 254 ||
+      password.length < 8 ||
+      Buffer.byteLength(password, "utf8") > 72
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter a name of 2–30 characters, a valid email, and a password of 8–72 bytes."
+      });
     }
+
     const existing = await User.findOne({ email }).lean();
-    if (existing) return res.status(409).json({ success: false, message: "An account with this email already exists." });
-    const user = await User.create({ name, email, passwordHash: await bcrypt.hash(password, 12) });
-    await startLoginSession(req, user);
-    res.status(201).json({ success: true, user: publicUser(user) });
-  } catch (error) {
-    if (error.code === 11000) return res.status(409).json({ success: false, message: "An account with this email already exists." });
-    console.error("Registration error:", error.message);
-    res.status(500).json({ success: false, message: "Could not create your account. Please try again." });
-  }
-});
-app.post("/api/auth/login", async (req, res) => {
-  try {
-    const email = String(req.body.email || "").trim().toLowerCase();
-    const password = String(req.body.password || "");
-    if (!validEmail(email) || email.length > 254 || !password || Buffer.byteLength(password, "utf8") > 72) {
-      return res.status(400).json({ success: false, message: "Enter a valid email and password." });
+
+    if (existing) {
+      return res.status(409).json({
+        success: false,
+        message: "An account with this email already exists."
+      });
     }
-    const user = await User.findOne({ email }).select("+passwordHash");
-    if (!user || !(await bcrypt.compare(password, user.passwordHash))) return res.status(401).json({ success: false, message: "Incorrect email or password." });
-    await startLoginSession(req, user);
-    res.json({ success: true, user: publicUser(user) });
+
+    const user = await User.create({
+      name,
+      email,
+      passwordHash: await bcrypt.hash(password, 12)
+    });
+
+    // Account created. Do not log in automatically.
+    res.status(201).json({
+      success: true,
+      message: "Account created successfully. Please log in."
+    });
+
   } catch (error) {
-    console.error("Login error:", error.message);
-    res.status(500).json({ success: false, message: "Could not log in. Please try again." });
+    if (error.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        message: "An account with this email already exists."
+      });
+    }
+
+    console.error("Registration error:", error.message);
+
+    res.status(500).json({
+      success: false,
+      message: "Could not create your account. Please try again."
+    });
   }
-});
-app.get("/api/auth/me", async (req, res) => {
-  try {
-    if (!req.session.userId) return res.status(401).json({ success: false, message: "Please log in." });
-    const user = await User.findById(req.session.userId);
-    if (!user) return req.session.destroy(() => res.status(401).json({ success: false, message: "Please log in again." }));
-    res.json({ success: true, user: publicUser(user) });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Could not check your account." });
-  }
-});
-app.post("/api/auth/logout", (req, res) => {
-  if (!req.session) return res.json({ success: true });
-  req.session.destroy(error => {
-    if (error) return res.status(500).json({ success: false, message: "Could not log out." });
-    res.clearCookie("fiveMChat.sid", { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production" });
-    res.json({ success: true });
-  });
 });
 
 // ---------------- PRIVATE ROOM API ----------------
@@ -553,7 +559,7 @@ app.post("/api/rooms/:code/accept", requireAuth, async (req, res) => {
 });
 
 // ---------------- PAGE ROUTES ----------------
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
+app.get("/", (req, res) => res.redirect("/login.html"));
 app.get("/login.html", (req, res) => res.sendFile(path.join(__dirname, "public", "login.html")));
 app.get("/chat.html", requireAuth, (req, res) => res.sendFile(path.join(__dirname, "public", "chat.html")));
 app.get("/api/status", (req, res) => {

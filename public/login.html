@@ -808,10 +808,19 @@
           throw new Error(result.message || "Something went wrong.");
         }
 
-        message.textContent = "Success! Opening your chat...";
-        message.className = "success";
-
-        window.location.assign("/chat.html");
+        if (mode === "register") {
+  message.textContent = "Account created successfully! Please log in.";
+  message.className = "success";
+  passwordInput.value = "";
+  setMode("login");
+  message.textContent = "Account created successfully! Please log in.";
+  message.className = "success";
+} else {
+  message.textContent = "Login successful! Opening your chat...";
+  
+  message.className = "success";
+  window.location.assign("/chat.html");
+}
 
       } catch (error) {
         message.textContent =
