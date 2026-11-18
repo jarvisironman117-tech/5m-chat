@@ -4,305 +4,489 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0b0718">
+  <meta name="theme-color" content="#080611">
   <link rel="manifest" href="/manifest.json">
-  <title>Login | 5M Chat</title>
+  <title>5M Chat | Private Conversations</title>
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     :root {
-      --purple: #9b70ff;
-      --light-purple: #c7adff;
-      --background: #0b0718;
+      --purple: #9b78ff;
+      --violet: #7044e8;
+      --text: #f8f5ff;
+      --muted: #9992ad;
+      --panel: rgba(20, 16, 35, .82);
     }
 
     body {
       margin: 0;
       min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      overflow-x: hidden;
-      font-family: Arial, sans-serif;
-      color: #f8f5ff;
+      color: var(--text);
       background:
-        radial-gradient(ellipse at 50% 45%, #29154f 0%, transparent 55%),
-        radial-gradient(ellipse at 10% 10%, #211044 0%, transparent 45%),
-        var(--background);
-      perspective: 1200px;
+        radial-gradient(ellipse at 23% 48%, #261344 0%, transparent 43%),
+        radial-gradient(ellipse at 85% 12%, #1a1030 0%, transparent 38%),
+        #080611;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      overflow-x: hidden;
     }
 
-    .background {
+    button, input {
+      font: inherit;
+    }
+
+    .universe {
       position: fixed;
       inset: 0;
+      z-index: -2;
       overflow: hidden;
       pointer-events: none;
-      z-index: -1;
     }
 
-    .grid {
-      position: absolute;
-      width: 150%;
-      height: 70%;
-      left: -25%;
-      bottom: -35%;
-      background-image:
-        linear-gradient(#9b70ff18 1px, transparent 1px),
-        linear-gradient(90deg, #9b70ff18 1px, transparent 1px);
-      background-size: 55px 55px;
-      transform: perspective(400px) rotateX(60deg);
-      mask-image: linear-gradient(transparent, black);
-    }
-
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(2px);
-      animation: float 9s ease-in-out infinite;
-    }
-
-    .orb.one {
-      width: 190px;
-      height: 190px;
-      top: 10%;
-      left: 10%;
-      background: radial-gradient(circle at 30% 30%, #d0b5ff, #7540e9 45%, #32115f);
-      box-shadow: 0 0 100px #8b5cf688;
-    }
-
-    .orb.two {
-      width: 130px;
-      height: 130px;
-      right: 12%;
-      bottom: 12%;
-      background: radial-gradient(circle at 30% 30%, #e0caff, #7442d9 50%, #29104e);
-      box-shadow: 0 0 90px #8b5cf677;
-      animation-delay: -4s;
-    }
-
-    .orb.three {
-      width: 65px;
-      height: 65px;
-      right: 22%;
-      top: 17%;
-      background: radial-gradient(circle at 30% 30%, #e5d8ff, #8755f3);
-      box-shadow: 0 0 55px #a78bfa99;
-      animation-delay: -2s;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translate3d(0, 0, 0); }
-      50% { transform: translate3d(0, -28px, 35px); }
-    }
-
-    .scene {
-      width: 100%;
-      max-width: 440px;
-      perspective: 1100px;
-    }
-
-    .card {
-      position: relative;
-      width: 100%;
-      padding: 38px 34px;
-      border: 1px solid #b99aff45;
-      border-radius: 26px;
-      background:
-        linear-gradient(145deg, #ffffff12, transparent 45%),
-        linear-gradient(145deg, #21183b, #120d22 75%);
-      box-shadow:
-        0 35px 90px #0009,
-        0 12px 35px #7540e933,
-        inset 0 1px 1px #ffffff25,
-        inset 0 -1px 1px #0008;
-      transform: rotateX(2deg) rotateY(-2deg);
-      transition: transform .35s ease, box-shadow .35s ease;
-      animation: cardAppear 1s ease both;
-    }
-
-    .card:hover {
-      transform: rotateX(0deg) rotateY(0deg) translateY(-5px);
-      box-shadow:
-        0 45px 100px #000b,
-        0 15px 45px #7540e955,
-        inset 0 1px 1px #ffffff30;
-    }
-
-    @keyframes cardAppear {
-      from {
-        opacity: 0;
-        transform: translateY(35px) rotateX(12deg);
-      }
-      to {
-        opacity: 1;
-        transform: rotateX(2deg) rotateY(-2deg);
-      }
-    }
-
-    .card::before {
+    .universe::before {
       content: "";
       position: absolute;
       inset: 0;
-      border-radius: inherit;
-      padding: 1px;
-      background: linear-gradient(
-        135deg,
-        #d8c4ff88,
-        transparent 35%,
-        #8b5cf633 70%,
-        #d8c4ff55
-      );
-      mask: linear-gradient(#fff 0 0) content-box,
-            linear-gradient(#fff 0 0);
-      mask-composite: exclude;
-      pointer-events: none;
+      opacity: .23;
+      background-image:
+        radial-gradient(1px 1px at 15% 20%, white 99%, transparent),
+        radial-gradient(1px 1px at 70% 35%, white 99%, transparent),
+        radial-gradient(2px 2px at 42% 75%, white 99%, transparent),
+        radial-gradient(1px 1px at 90% 80%, white 99%, transparent),
+        radial-gradient(1px 1px at 55% 12%, white 99%, transparent);
+      background-size: 240px 220px;
     }
 
-    .logo {
+    .ambient {
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      filter: blur(110px);
+      opacity: .19;
+      background: #7943ed;
+      animation: ambientFloat 12s ease-in-out infinite alternate;
+    }
+
+    .ambient.a {
+      left: -180px;
+      top: 20%;
+    }
+
+    .ambient.b {
+      right: -190px;
+      bottom: -120px;
+      background: #4922a7;
+      animation-delay: -5s;
+    }
+
+    @keyframes ambientFloat {
+      to { transform: translate3d(55px, -35px, 0) scale(1.15); }
+    }
+
+    .layout {
+      width: min(1180px, calc(100% - 64px));
+      min-height: 100vh;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      align-items: center;
+      gap: 75px;
+      padding: 55px 0;
+    }
+
+    /* BRAND */
+
+    .brand {
+      position: absolute;
+      top: 32px;
+      left: max(32px, calc((100vw - 1180px) / 2));
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 27px;
-      font-weight: 900;
-      letter-spacing: -1px;
+      gap: 12px;
+      z-index: 3;
     }
 
-    .logo-icon {
+    .brand-icon {
+      width: 42px;
+      height: 42px;
       display: grid;
       place-items: center;
-      width: 43px;
-      height: 43px;
-      border-radius: 13px;
-      background: linear-gradient(145deg, #b99aff, #7040d8);
-      box-shadow:
-        0 7px 18px #8b5cf655,
-        inset 0 2px 3px #ffffff70,
-        inset 0 -3px 5px #32106c;
+      border-radius: 14px;
+      color: white;
+      font-weight: 900;
+      font-size: 14px;
+      background: linear-gradient(145deg, #c3aaff, #7142db 65%, #43218f);
+      box-shadow: 0 8px 25px #8756ff55,
+        inset 0 1px 2px #ffffff99;
     }
 
-    .logo span { color: var(--light-purple); }
-
-    .tagline {
-      margin: 8px 0 30px;
-      color: #a99cbe;
-      font-size: 12px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      margin: 0 0 9px;
-      font-size: 29px;
+    .brand-name {
+      font-size: 21px;
+      font-weight: 800;
       letter-spacing: -.7px;
     }
 
+    .brand-name span {
+      color: #b49aff;
+    }
+
+    /* LEFT SIDE */
+
+    .hero {
+      position: relative;
+      padding-top: 45px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: #c5b2ff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #a78bfa;
+      box-shadow: 0 0 12px #a78bfa;
+    }
+
+    .hero h1 {
+      max-width: 560px;
+      margin: 20px 0 14px;
+      font-size: clamp(38px, 5vw, 62px);
+      line-height: 1.08;
+      letter-spacing: -2.8px;
+      font-weight: 800;
+    }
+
+    .hero h1 span {
+      color: #b39aff;
+      text-shadow: 0 0 35px #8b5cf644;
+    }
+
+    .hero-copy {
+      max-width: 440px;
+      color: #aaa2bc;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    /* 3D CHAT ORBIT */
+
+    .orbit-scene {
+      position: relative;
+      width: min(460px, 100%);
+      height: 360px;
+      margin: 25px auto 0;
+      perspective: 900px;
+      transform-style: preserve-3d;
+    }
+
+    .orbit-ring {
+      position: absolute;
+      left: 50%;
+      top: 49%;
+      width: 300px;
+      height: 115px;
+      border: 1px solid #a987ff44;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) rotateX(66deg) rotateZ(-18deg);
+      box-shadow: 0 0 28px #8b5cf622;
+    }
+
+    .orbit-ring.second {
+      width: 365px;
+      height: 145px;
+      border-color: #8b5cf622;
+      transform: translate(-50%, -50%) rotateX(66deg) rotateZ(25deg);
+    }
+
+    .platform {
+      position: absolute;
+      left: 50%;
+      top: 57%;
+      width: 210px;
+      height: 210px;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) rotateX(67deg);
+      background:
+        radial-gradient(circle, #9c72ff33 0%, #6135c322 45%, transparent 72%);
+      border: 1px solid #a78bfa55;
+      box-shadow:
+        0 0 35px #8b5cf644,
+        inset 0 0 35px #8b5cf622;
+    }
+
+    .platform::before {
+      content: "";
+      position: absolute;
+      inset: 20px;
+      border: 1px solid #c4aaff55;
+      border-radius: 50%;
+    }
+
+    .main-bubble {
+      position: absolute;
+      left: 50%;
+      top: 42%;
+      width: 142px;
+      height: 126px;
+      display: grid;
+      place-items: center;
+      border-radius: 38px 38px 38px 13px;
+      transform: translate(-50%, -50%) rotateX(10deg) rotateY(-12deg);
+      background: linear-gradient(145deg, #c4aaff, #8756ed 48%, #4b23a2);
+      box-shadow:
+        0 25px 45px #0008,
+        0 0 65px #905eff77,
+        inset 0 3px 5px #ffffff99,
+        inset 0 -8px 15px #32116c88;
+      animation: bubbleFloat 5s ease-in-out infinite;
+    }
+
+    .main-bubble::after {
+      content: "";
+      position: absolute;
+      bottom: -12px;
+      left: 5px;
+      border-width: 0 0 24px 26px;
+      border-style: solid;
+      border-color: transparent transparent transparent #6836c4;
+      transform: rotate(10deg);
+    }
+
+    .bubble-inner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bubble-inner span {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 0 12px white;
+      animation: pulse 1.6s ease-in-out infinite alternate;
+    }
+
+    .bubble-inner span:nth-child(2) { animation-delay: .3s; }
+    .bubble-inner span:nth-child(3) { animation-delay: .6s; }
+
+    @keyframes bubbleFloat {
+      0%, 100% { margin-top: 0; }
+      50% { margin-top: -17px; }
+    }
+
+    @keyframes pulse {
+      to { opacity: .4; transform: scale(.75); }
+    }
+
+    .orbit-avatar {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border: 1px solid #d1baff88;
+      border-radius: 17px;
+      background: linear-gradient(145deg, #38245d, #171025);
+      box-shadow: 0 12px 30px #0008, 0 0 22px #8b5cf633;
+      font-size: 21px;
+      animation: avatarFloat 5s ease-in-out infinite;
+    }
+
+    .avatar-one { left: 13%; top: 26%; }
+    .avatar-two { right: 12%; top: 24%; animation-delay: -1.5s; }
+    .avatar-three { left: 22%; bottom: 12%; animation-delay: -3s; }
+    .avatar-four { right: 20%; bottom: 10%; animation-delay: -2s; }
+
+    @keyframes avatarFloat {
+      0%, 100% { translate: 0 0; }
+      50% { translate: 0 -12px; }
+    }
+
+    .connection {
+      position: absolute;
+      height: 1px;
+      width: 110px;
+      left: 50%;
+      top: 43%;
+      background: linear-gradient(90deg, transparent, #b59aff88, transparent);
+      transform-origin: left;
+    }
+
+    .connection.one { transform: rotate(205deg); }
+    .connection.two { transform: rotate(-25deg); }
+
+    .hero-caption {
+      text-align: center;
+      color: #8e83a7;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: -5px;
+    }
+
+    /* LOGIN PANEL */
+
+    .login-wrap {
+      width: 100%;
+      max-width: 430px;
+      justify-self: end;
+      perspective: 1200px;
+    }
+
+    .login-card {
+      position: relative;
+      padding: 39px 36px 32px;
+      border: 1px solid #b59aff2c;
+      border-radius: 25px;
+      background:
+        linear-gradient(145deg, #ffffff0b, transparent 45%),
+        var(--panel);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      box-shadow:
+        0 35px 90px #0009,
+        0 0 55px #7844e916,
+        inset 0 1px 0 #ffffff19;
+      animation: panelEnter .8s ease both;
+    }
+
+    .login-card::before {
+      content: "";
+      position: absolute;
+      left: 12%;
+      right: 12%;
+      top: -1px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #c7adff99, transparent);
+    }
+
+    @keyframes panelEnter {
+      from { opacity: 0; transform: translateY(24px) rotateY(-5deg); }
+      to { opacity: 1; transform: translateY(0) rotateY(0); }
+    }
+
+    .card-mark {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 25px;
+      border-radius: 14px;
+      color: #d9caff;
+      background: #8b5cf622;
+      border: 1px solid #a78bfa44;
+      font-size: 20px;
+      box-shadow: 0 0 25px #8b5cf622;
+    }
+
+    .login-card h2 {
+      margin: 0 0 9px;
+      font-size: 29px;
+      letter-spacing: -.8px;
+    }
+
     .sub {
-      margin: 0 0 25px;
-      color: #b8aecb;
-      line-height: 1.6;
-      font-size: 14px;
+      margin: 0 0 27px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
     }
 
     label {
       display: block;
       margin: 17px 0 8px;
-      color: #e5dcf5;
-      font-size: 13px;
-      font-weight: 600;
+      color: #d9d2e8;
+      font-size: 12px;
+      font-weight: 650;
     }
 
     input {
       width: 100%;
-      padding: 15px;
+      padding: 15px 16px;
       color: white;
-      background: #0d0919;
-      border: 1px solid #493b67;
-      border-radius: 12px;
-      font-size: 15px;
-      transition: .25s ease;
-      box-shadow: inset 0 3px 8px #0005;
+      border: 1px solid #514465;
+      border-radius: 11px;
+      outline: none;
+      background: #0d0a17;
+      box-shadow: inset 0 2px 7px #0005;
+      font-size: 14px;
+      transition: border-color .2s, box-shadow .2s;
     }
 
-    input::placeholder { color: #716783; }
+    input::placeholder { color: #706880; }
 
     input:focus {
-      outline: none;
       border-color: #a78bfa;
-      box-shadow:
-        0 0 0 3px #8b5cf622,
-        0 0 20px #8b5cf622,
-        inset 0 3px 8px #0005;
+      box-shadow: 0 0 0 3px #8b5cf622, 0 0 20px #8b5cf622;
     }
 
-    button {
-      cursor: pointer;
+    .primary-button {
       width: 100%;
-      margin-top: 23px;
+      margin-top: 25px;
       padding: 15px;
-      border: 1px solid #c7adff66;
-      border-radius: 12px;
       color: white;
-      background: linear-gradient(135deg, #a17aff, #7040d8);
-      font-size: 15px;
-      font-weight: 800;
+      border: 1px solid #d0baff55;
+      border-radius: 11px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 750;
       letter-spacing: .3px;
-      box-shadow:
-        0 8px 0 #43218c,
-        0 14px 28px #7540e955,
-        inset 0 1px 2px #ffffff77;
-      transition: transform .2s ease, box-shadow .2s ease;
+      background: linear-gradient(110deg, #9d79ff, #7042db);
+      box-shadow: 0 9px 25px #7042db44, inset 0 1px 1px #ffffff66;
+      transition: transform .2s, box-shadow .2s, filter .2s;
     }
 
-    button:hover {
-      transform: translateY(-3px);
-      box-shadow:
-        0 11px 0 #43218c,
-        0 19px 32px #7540e977,
-        inset 0 1px 2px #ffffff88;
+    .primary-button:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+      box-shadow: 0 13px 30px #7042db66;
     }
 
-    button:active {
-      transform: translateY(5px);
-      box-shadow:
-        0 3px 0 #43218c,
-        0 7px 15px #7540e944;
-    }
+    .primary-button:active { transform: translateY(1px); }
 
-    button:disabled {
+    .primary-button:disabled {
       opacity: .6;
       cursor: wait;
       transform: none;
     }
 
     .switch {
-      margin-top: 27px;
+      margin-top: 25px;
       text-align: center;
-      color: #bcb2cf;
-      font-size: 13px;
+      color: #a9a1b8;
+      font-size: 12px;
     }
 
     .switch button {
-      width: auto;
-      margin: 0;
-      padding: 5px 7px;
       border: 0;
-      color: #c6aaff;
-      background: none;
-      box-shadow: none;
-      font-size: 13px;
+      padding: 5px;
+      color: #c5adff;
+      background: transparent;
+      cursor: pointer;
+      font-weight: 700;
     }
 
-    .switch button:hover {
-      transform: none;
-      text-decoration: underline;
-    }
+    .switch button:hover { color: white; }
 
     #message {
-      margin-top: 17px;
-      line-height: 1.5;
-      font-size: 13px;
+      min-height: 18px;
+      margin-top: 15px;
       text-align: center;
+      font-size: 12px;
+      line-height: 1.5;
     }
 
     .error { color: #ff9eaa; }
@@ -310,45 +494,97 @@
 
     .back {
       display: block;
-      margin-top: 25px;
-      color: #bda6ef;
+      margin-top: 24px;
+      color: #9d91b4;
       text-align: center;
-      font-size: 13px;
       text-decoration: none;
+      font-size: 12px;
+      transition: color .2s;
     }
 
     .back:hover { color: white; }
 
-    .bottom-note {
-      margin-top: 25px;
-      text-align: center;
-      color: #746985;
-      font-size: 11px;
-      letter-spacing: .4px;
+    .security-note {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 23px;
+      color: #777087;
+      font-size: 10px;
+      letter-spacing: .6px;
     }
+
+    .security-note span { color: #a78bfa; }
 
     [hidden] { display: none !important; }
 
-    @media (max-width: 520px) {
-      body { padding: 18px; }
+    /* RESPONSIVE */
 
-      .card {
-        padding: 30px 23px;
-        transform: none;
+    @media (max-width: 850px) {
+      .layout {
+        width: min(500px, calc(100% - 36px));
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 100px 0 40px;
       }
 
-      .card:hover { transform: translateY(-3px); }
-      h1 { font-size: 26px; }
-
-      .orb.one {
-        width: 110px;
-        height: 110px;
+      .brand {
+        left: 22px;
+        top: 22px;
       }
 
-      .orb.two {
-        width: 90px;
-        height: 90px;
+      .hero {
+        padding-top: 0;
+        text-align: center;
       }
+
+      .hero h1 {
+        margin: 13px auto 10px;
+        font-size: clamp(32px, 8vw, 45px);
+        letter-spacing: -1.7px;
+      }
+
+      .hero-copy {
+        margin: auto;
+        font-size: 13px;
+      }
+
+      .orbit-scene {
+        height: 270px;
+        max-width: 370px;
+        margin-top: 5px;
+      }
+
+      .main-bubble {
+        width: 112px;
+        height: 100px;
+      }
+
+      .orbit-ring { width: 240px; }
+      .orbit-ring.second { width: 290px; }
+
+      .platform {
+        width: 170px;
+        height: 170px;
+      }
+
+      .login-wrap {
+        justify-self: center;
+      }
+
+      .login-card {
+        padding: 30px 26px 26px;
+      }
+
+      .card-mark { margin-bottom: 18px; }
+      .login-card h2 { font-size: 26px; }
+    }
+
+    @media (max-width: 390px) {
+      .layout { width: calc(100% - 26px); }
+      .orbit-scene { height: 235px; }
+      .login-card { padding: 27px 21px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -362,89 +598,127 @@
 </head>
 
 <body>
-
-  <div class="background">
-    <div class="grid"></div>
-    <div class="orb one"></div>
-    <div class="orb two"></div>
-    <div class="orb three"></div>
+  <div class="universe">
+    <div class="ambient a"></div>
+    <div class="ambient b"></div>
   </div>
 
-  <main class="scene">
-    <section class="card">
+  <header class="brand">
+    <div class="brand-icon">5M</div>
+    <div class="brand-name">5M <span>Chat</span></div>
+  </header>
 
-      <div class="logo">
-        <div class="logo-icon">5M</div>
-        <div>5M <span>Chat</span></div>
+  <main class="layout">
+
+    <section class="hero">
+      <div class="eyebrow">
+        <span class="live-dot"></span>
+        YOUR PRIVATE SPACE
       </div>
 
-      <p class="tagline">Talk freely. Time disappears.</p>
+      <h1>Conversations that <span>feel closer.</span></h1>
 
-      <h1 id="heading">Welcome back</h1>
-
-      <p class="sub" id="description">
-        Log in to continue your conversations.
+      <p class="hero-copy">
+        Your own private space to talk, connect, and share moments.
+        When time disappears, your conversations stay meaningful.
       </p>
 
-      <form id="authForm">
+      <div class="orbit-scene" aria-hidden="true">
+        <div class="orbit-ring"></div>
+        <div class="orbit-ring second"></div>
+        <div class="platform"></div>
 
-        <div id="nameField" hidden>
-          <label for="name">Display name</label>
+        <div class="connection one"></div>
+        <div class="connection two"></div>
+
+        <div class="orbit-avatar avatar-one">😊</div>
+        <div class="orbit-avatar avatar-two">😎</div>
+        <div class="orbit-avatar avatar-three">🦊</div>
+        <div class="orbit-avatar avatar-four">✨</div>
+
+        <div class="main-bubble">
+          <div class="bubble-inner">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+
+      <p class="hero-caption">Private rooms · Real conversations</p>
+    </section>
+
+    <section class="login-wrap">
+      <div class="login-card">
+
+        <div class="card-mark">✦</div>
+
+        <h2 id="heading">Welcome back</h2>
+
+        <p class="sub" id="description">
+          Log in to continue your conversations.
+        </p>
+
+        <form id="authForm">
+
+          <div id="nameField" hidden>
+            <label for="name">Display name</label>
+            <input
+              id="name"
+              name="name"
+              autocomplete="name"
+              minlength="2"
+              maxlength="30"
+              placeholder="Enter your name"
+            >
+          </div>
+
+          <label for="email">Email address</label>
           <input
-            id="name"
-            name="name"
-            autocomplete="name"
-            minlength="2"
-            maxlength="30"
-            placeholder="Enter your name"
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+            maxlength="254"
+            placeholder="you@example.com"
           >
+
+          <label for="password">Password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+            minlength="8"
+            maxlength="72"
+            placeholder="Enter your password"
+          >
+
+          <button class="primary-button" id="submitButton" type="submit">
+            Log in
+          </button>
+
+        </form>
+
+        <div id="message" role="status" aria-live="polite"></div>
+
+        <div class="switch">
+          <span id="switchText">New to 5M Chat?</span>
+          <button id="switchButton" type="button">Create account</button>
         </div>
 
-        <label for="email">Email</label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          autocomplete="email"
-          required
-          maxlength="254"
-          placeholder="you@example.com"
-        >
+        <a class="back" href="/">← Back to home</a>
 
-        <label for="password">Password</label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          autocomplete="current-password"
-          required
-          minlength="8"
-          maxlength="72"
-          placeholder="Enter your password"
-        >
+        <div class="security-note">
+          <span>✦</span>
+          PRIVATE ROOMS · TEMPORARY MESSAGES
+        </div>
 
-        <button id="submitButton" type="submit">
-          Log in
-        </button>
-
-      </form>
-
-      <div id="message" role="status" aria-live="polite"></div>
-
-      <div class="switch">
-        <span id="switchText">New to 5M Chat?</span>
-        <button id="switchButton" type="button">
-          Create account
-        </button>
       </div>
-
-      <a class="back" href="/">← Back to home</a>
-
-      <div class="bottom-note">
-        PRIVATE ROOMS · TEMPORARY MESSAGES
-      </div>
-
     </section>
+
   </main>
 
   <script>
@@ -560,6 +834,5 @@
       });
     }
   </script>
-
 </body>
 </html>

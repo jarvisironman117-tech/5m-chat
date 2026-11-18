@@ -258,6 +258,680 @@ h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:0 0 14px}
   }
 }
 
+
+/* ===== 5M CHAT · IMMERSIVE 3D UNIVERSE THEME ===== */
+:root {
+  --bg: #080611;
+  --panel: rgba(24, 17, 43, .88);
+  --light: rgba(43, 29, 73, .92);
+  --purple: #a987ff;
+  --pale: #ddccff;
+  --text: #faf7ff;
+  --muted: #b8acd2;
+  --border: rgba(176, 139, 255, .25);
+}
+html { background: #080611; }
+body {
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden;
+  padding: 24px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(111, 62, 196, .28), transparent 48%),
+    radial-gradient(ellipse at 5% 55%, rgba(65, 31, 116, .22), transparent 42%),
+    radial-gradient(ellipse at 95% 80%, rgba(92, 43, 157, .18), transparent 40%),
+    #080611;
+  perspective: 1400px;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .34;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, #fff 98%, transparent),
+    radial-gradient(1px 1px at 78% 22%, #d8c2ff 98%, transparent),
+    radial-gradient(2px 2px at 42% 68%, #fff 98%, transparent),
+    radial-gradient(1px 1px at 88% 76%, #c6a4ff 98%, transparent),
+    radial-gradient(1px 1px at 24% 88%, #fff 98%, transparent);
+  background-size: 290px 260px, 370px 310px, 430px 360px, 330px 290px, 390px 340px;
+}
+.app {
+  position: relative;
+  max-width: 1080px;
+  margin: 20px auto;
+  overflow: hidden;
+  background: linear-gradient(145deg, rgba(30, 21, 53, .96), rgba(12, 9, 25, .97));
+  border: 1px solid rgba(190, 157, 255, .28);
+  border-radius: 26px;
+  box-shadow:
+    0 35px 110px rgba(0, 0, 0, .68),
+    0 0 65px rgba(126, 78, 219, .17),
+    inset 0 1px 0 rgba(255,255,255,.09);
+  transform: translateZ(0);
+  animation: universe-arrive .8s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes universe-arrive {
+  from { opacity: 0; transform: translateY(18px) rotateX(2deg) scale(.985); }
+  to { opacity: 1; transform: translateY(0) rotateX(0) scale(1); }
+}
+header {
+  position: relative;
+  background: linear-gradient(115deg, rgba(51, 32, 83, .96), rgba(25, 18, 45, .96));
+  border-bottom: 1px solid rgba(191, 160, 255, .22);
+  box-shadow: 0 12px 35px rgba(0,0,0,.2);
+}
+.brand {
+  letter-spacing: -.8px;
+  text-shadow: 0 0 22px rgba(174, 137, 255, .55);
+}
+.brand span { color: #d4bdff; }
+button {
+  position: relative;
+  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+  box-shadow: 0 7px 18px rgba(104, 67, 180, .22), inset 0 1px 0 rgba(255,255,255,.2);
+}
+button:not(:disabled):hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 12px 26px rgba(133, 91, 222, .32), inset 0 1px 0 rgba(255,255,255,.25);
+}
+button:not(:disabled):active { transform: translateY(1px) scale(.985); }
+input {
+  background: rgba(8, 6, 18, .72);
+  border-color: rgba(174, 139, 235, .27);
+  box-shadow: inset 0 3px 12px rgba(0,0,0,.25);
+}
+input:focus {
+  border-color: #ad8cff;
+  box-shadow: 0 0 0 3px rgba(158, 119, 255, .13), 0 0 24px rgba(145, 99, 235, .13);
+}
+.panel, .room-card, .request-card, .profile-panel, .call-panel {
+  background: linear-gradient(145deg, rgba(42, 29, 68, .92), rgba(20, 15, 36, .94));
+  border: 1px solid rgba(177, 142, 244, .23);
+  box-shadow: 0 16px 35px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.055);
+  transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease;
+}
+.grid > .panel:hover, .room-card:hover, .request-card:hover {
+  transform: translateY(-4px) rotateX(1deg);
+  border-color: rgba(190, 158, 255, .48);
+  box-shadow: 0 22px 42px rgba(0,0,0,.3), 0 0 25px rgba(134, 88, 222, .12);
+}
+.room-card, .request-card { border-radius: 17px; }
+.room-bar, .online-panel, .composer {
+  background: linear-gradient(110deg, rgba(22, 16, 39, .98), rgba(31, 21, 51, .96));
+}
+.online-user {
+  background: linear-gradient(135deg, rgba(62, 43, 96, .9), rgba(31, 22, 51, .95));
+  border-color: rgba(180, 145, 245, .24);
+  box-shadow: 0 7px 18px rgba(0,0,0,.2);
+}
+.profile-avatar, .chat-avatar {
+  box-shadow: 0 0 18px rgba(184, 126, 255, .2), inset 0 1px 5px rgba(255,255,255,.1);
+}
+.message {
+  position: relative;
+  background: linear-gradient(145deg, rgba(48, 36, 75, .98), rgba(29, 22, 49, .98));
+  border-color: rgba(173, 143, 225, .23);
+  box-shadow: 0 9px 22px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.055);
+  transform: translateZ(10px);
+  animation: message-arrive .25s ease both;
+}
+.message.mine {
+  background: linear-gradient(145deg, #6846a5, #39265f);
+  border-color: rgba(211, 187, 255, .34);
+  box-shadow: 0 10px 25px rgba(74, 42, 129, .28), inset 0 1px 0 rgba(255,255,255,.14);
+}
+@keyframes message-arrive {
+  from { opacity: 0; transform: translateY(8px) translateZ(0) scale(.985); }
+  to { opacity: 1; transform: translateY(0) translateZ(10px) scale(1); }
+}
+#messages {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(103, 66, 165, .09), transparent 60%),
+    rgba(8, 6, 18, .18);
+  perspective: 900px;
+}
+.video-screen, .local-video-screen {
+  border-color: rgba(182, 148, 255, .4);
+  box-shadow: 0 12px 28px rgba(0,0,0,.35), 0 0 24px rgba(132, 89, 221, .14);
+}
+.call-panel { box-shadow: 0 14px 35px rgba(0,0,0,.25), 0 0 30px rgba(135, 84, 222, .13); }
+.notice {
+  background: rgba(102, 71, 153, .2);
+  border: 1px solid rgba(179, 145, 244, .2);
+}
+@media (max-width: 600px) {
+  body { padding: 0; }
+  .app { border-radius: 0; animation: none; }
+  .grid > .panel:hover, .room-card:hover, .request-card:hover { transform: none; }
+  button:not(:disabled):hover { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* ===== 5M CHAT · ORBITAL 3D EXPERIENCE ===== */
+body { padding: 26px; }
+.app { max-width: 1180px; }
+header { padding: 21px 28px; }
+.brand { font-size: 26px; letter-spacing: -1.2px; }
+.subtitle { letter-spacing: .12em; text-transform: uppercase; font-size: 10px; }
+main { padding: 28px; }
+.universe-hero {
+  position: relative; display: grid; grid-template-columns: minmax(0, .92fr) minmax(320px, 1.08fr);
+  align-items: center; min-height: 330px; margin: 0 0 28px; padding: 26px 28px 22px 32px;
+  overflow: hidden; isolation: isolate; border: 1px solid rgba(190,160,255,.18);
+  border-radius: 23px;
+  background: radial-gradient(ellipse at 76% 50%, rgba(113,65,190,.2), transparent 48%),
+              linear-gradient(120deg, rgba(35,24,61,.92), rgba(12,9,27,.72));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 20px 55px rgba(0,0,0,.24);
+}
+.universe-hero::before {
+  content:""; position:absolute; inset:0; z-index:-1; opacity:.2; pointer-events:none;
+  background-image: linear-gradient(rgba(190,160,255,.08) 1px,transparent 1px),
+                    linear-gradient(90deg,rgba(190,160,255,.08) 1px,transparent 1px);
+  background-size:42px 42px; mask-image:linear-gradient(90deg,black,transparent 88%);
+}
+.hero-copy { position:relative; z-index:2; max-width:440px; }
+.eyebrow { color:#bda5f7; font-size:10px; font-weight:800; letter-spacing:.2em; }
+.eyebrow-dot { display:inline-block; width:7px; height:7px; margin-right:8px; border-radius:50%; background:#9e7bff; box-shadow:0 0 13px #a987ff; }
+.hero-copy h1 { margin:18px 0 13px; font-size:clamp(38px,5vw,61px); line-height:.99; letter-spacing:-.055em; }
+.hero-copy h1 span { color:#b99cff; text-shadow:0 0 28px rgba(160,117,255,.28); }
+.hero-copy .muted { max-width:340px; font-size:14px; }
+.hero-facts { display:flex; flex-wrap:wrap; gap:18px; margin-top:23px; color:#c6b8e0; font-size:11px; }
+.hero-facts span { display:flex; align-items:center; gap:7px; }
+.hero-facts i { width:6px; height:6px; border-radius:50%; background:#8fe2bb; box-shadow:0 0 10px rgba(143,226,187,.6); }
+.hero-visual { position:relative; height:290px; min-width:0; perspective:900px; }
+#universeCanvas { display:block; width:100%; height:100%; outline:none; cursor:grab; }
+#universeCanvas:active { cursor:grabbing; }
+.orbit-caption { position:absolute; color:rgba(218,204,255,.66); font-size:8px; letter-spacing:.2em; pointer-events:none; }
+.caption-top { top:12px; right:9px; }
+.caption-bottom { bottom:8px; right:8px; }
+.section-heading { display:flex; align-items:end; justify-content:space-between; gap:12px; margin:0 0 12px; }
+.section-heading h2 { margin:5px 0 0; font-size:20px; letter-spacing:-.03em; }
+.section-hint { color:#9689b2; font-size:11px; }
+.grid { margin:0 0 18px; gap:16px; }
+.grid > .panel, #dashboard > main > .panel { padding:20px; }
+.panel h2 { letter-spacing:-.02em; }
+.panel { border-radius:18px; }
+.room-card, .request-card { padding:15px 17px; }
+#roomList, #requestList { gap:11px; }
+#chatPanel { background:rgba(10,7,21,.24); }
+.room-bar { padding:16px 22px; }
+#messages { min-height:360px; max-height:56vh; padding:22px; }
+.composer { padding:17px 22px 19px; }
+#messageForm { display:flex; gap:10px; }
+#messageInput { flex:1; min-width:0; }
+.footnote { color:#82769e; font-size:10px; letter-spacing:.015em; }
+.profile-panel { border-radius:18px; }
+.call-panel { border-radius:16px; }
+button { border-radius:11px; }
+button.secondary { background:rgba(63,48,91,.78); }
+@media (max-width:760px) {
+  body { padding:10px; }
+  .universe-hero { grid-template-columns:1fr; padding:24px 22px 12px; }
+  .hero-copy { max-width:100%; }
+  .hero-visual { height:230px; margin-top:4px; }
+  .hero-copy h1 { font-size:46px; }
+  main { padding:18px; }
+}
+@media (max-width:560px) {
+  body { padding:0; }
+  .universe-hero { border-radius:17px; padding:21px 17px 8px; }
+  .hero-visual { height:205px; }
+  .section-heading { align-items:start; flex-direction:column; }
+  .section-hint { display:none; }
+  .grid { grid-template-columns:1fr; }
+  #messages { min-height:300px; max-height:52vh; padding:14px; }
+  .composer { padding:13px; }
+  #messageForm { flex-wrap:wrap; }
+  #messageInput { flex-basis:100%; }
+  #sendButton { width:100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #universeCanvas { cursor:default; }
+}
+
+/* ==========================================
+   5M CHAT — PREMIUM CHAT INTERFACE V2
+========================================== */
+
+#chatPanel {
+  background: rgba(10, 7, 22, .45);
+}
+
+/* Room header */
+.room-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 19px 25px;
+  background: rgba(22, 15, 39, .88);
+  backdrop-filter: blur(22px);
+  border-bottom: 1px solid rgba(190, 155, 255, .18);
+  font-size: 13px;
+}
+
+.room-bar strong {
+  color: #d9c5ff;
+  font-size: 15px;
+}
+
+#backButton {
+  border-radius: 30px;
+  padding: 10px 18px;
+}
+
+/* Profile */
+.profile-panel {
+  margin: 18px 22px;
+  padding: 20px;
+  border-radius: 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(65, 39, 100, .55),
+    rgba(22, 15, 40, .85)
+  );
+  border: 1px solid rgba(190, 155, 255, .2);
+}
+
+/* Online members */
+.online-panel {
+  padding: 20px 23px;
+  background: rgba(18, 12, 32, .8);
+  border-bottom: 1px solid rgba(190, 155, 255, .13);
+}
+
+.online-heading {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #c9b4f5;
+  margin-bottom: 13px;
+}
+
+.online-user {
+  border-radius: 30px;
+  padding: 8px 12px;
+  background: rgba(94, 65, 140, .19);
+  border: 1px solid rgba(190, 155, 255, .2);
+  transition: .2s ease;
+}
+
+.online-user:hover {
+  background: rgba(130, 88, 190, .3);
+}
+
+/* Messages area */
+#messages {
+  height: 55vh;
+  min-height: 360px;
+  max-height: 650px;
+  padding: 25px clamp(15px, 5vw, 65px);
+  gap: 17px;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(107, 65, 173, .08),
+      transparent 75%
+    ),
+    rgba(8, 6, 18, .3);
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #60458e transparent;
+}
+
+/* Message bubbles */
+.message {
+  max-width: min(76%, 520px);
+  padding: 13px 16px;
+  border-radius: 5px 19px 19px 19px;
+  background: linear-gradient(
+    145deg,
+    rgba(53, 40, 80, .98),
+    rgba(31, 23, 49, .98)
+  );
+  border: 1px solid rgba(190, 155, 255, .18);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, .2);
+}
+
+.message.mine {
+  border-radius: 19px 5px 19px 19px;
+  background: linear-gradient(
+    135deg,
+    #8057c5,
+    #52327f
+  );
+  border: 1px solid rgba(215, 191, 255, .3);
+  box-shadow: 0 8px 26px rgba(112, 70, 177, .2);
+}
+
+.sender-row {
+  margin-bottom: 9px;
+}
+
+.sender {
+  font-size: 12px;
+  color: #d8c3ff;
+  letter-spacing: .2px;
+}
+
+.message-text {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #faf7ff;
+  overflow-wrap: anywhere;
+}
+
+.message-time {
+  margin-top: 9px;
+  font-size: 10px;
+  color: #d9c9f1;
+}
+
+.seen-label {
+  margin-top: 5px;
+  font-size: 10px;
+  text-align: right;
+  color: #d9c2ff;
+}
+
+.message audio {
+  max-width: 100%;
+}
+
+/* Typing indicator */
+#typingIndicator {
+  padding: 5px 28px 12px;
+  color: #c5a8ff;
+  font-size: 12px;
+}
+
+/* Message composer */
+.composer {
+  padding: 22px clamp(14px, 4vw, 45px);
+  background: rgba(20, 13, 35, .94);
+  border-top: 1px solid rgba(190, 155, 255, .2);
+  backdrop-filter: blur(20px);
+}
+
+#messageForm {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 950px;
+  margin: auto;
+}
+
+#messageInput {
+  min-height: 52px;
+  padding: 14px 19px;
+  border-radius: 17px;
+  background: rgba(8, 6, 19, .85);
+  border: 1px solid rgba(182, 146, 255, .25);
+  font-size: 14px;
+  transition: .25s ease;
+}
+
+#messageInput:focus {
+  border-color: #ae8aff;
+  box-shadow: 0 0 0 4px rgba(158, 119, 255, .12);
+}
+
+#sendButton {
+  min-height: 50px;
+  min-width: 95px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #bd9aff, #8053d0);
+  color: #160b29;
+  font-weight: 800;
+}
+
+.tools {
+  max-width: 950px;
+  margin: 14px auto 0;
+  gap: 10px;
+}
+
+.tools button {
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+
+/* Call interface */
+.call-panel {
+  padding: 20px;
+  border-radius: 19px;
+  background: linear-gradient(
+    135deg,
+    rgba(76, 43, 119, .4),
+    rgba(19, 13, 34, .95)
+  );
+}
+
+.video-screen,
+.local-video-screen {
+  border-radius: 18px;
+  background: #090713;
+  border: 1px solid rgba(190, 155, 255, .35);
+}
+
+/* Scrollbars */
+#messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+#messages::-webkit-scrollbar-thumb {
+  background: rgba(166, 128, 226, .4);
+  border-radius: 20px;
+}
+
+/* Responsive */
+@media(max-width: 600px) {
+  .room-bar {
+    padding: 15px;
+  }
+
+  .profile-panel {
+    margin: 12px;
+    padding: 15px;
+  }
+
+  .online-panel {
+    padding: 15px;
+  }
+
+  #messages {
+    height: 52vh;
+    min-height: 300px;
+    padding: 16px 12px;
+    gap: 14px;
+  }
+
+  .message {
+    max-width: 89%;
+    padding: 12px;
+  }
+
+  .composer {
+    padding: 14px 12px;
+  }
+
+  #messageForm {
+    flex-wrap: nowrap;
+  }
+
+  #messageInput {
+    flex: 1;
+    min-width: 0;
+  }
+
+  #sendButton {
+    min-width: 72px;
+    padding: 0 12px;
+  }
+
+  .tools {
+    gap: 7px;
+  }
+
+  .tools button {
+    padding: 9px 11px;
+    font-size: 12px;
+  }
+}
+
+/* ===== 5M CHAT · FLOATING MESSAGE COMPOSER ===== */
+
+.composer {
+  position: relative;
+  padding: 22px clamp(14px, 4vw, 42px) 24px;
+  background: linear-gradient(
+    145deg,
+    rgba(28, 19, 48, .98),
+    rgba(12, 9, 25, .99)
+  );
+  border-top: 1px solid rgba(190, 155, 255, .18);
+}
+
+#messageForm {
+  max-width: 1000px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 7px;
+  border: 1px solid rgba(183, 148, 255, .3);
+  border-radius: 19px;
+  background: rgba(8, 6, 19, .92);
+  box-shadow:
+    0 12px 35px rgba(0, 0, 0, .3),
+    0 0 25px rgba(137, 91, 220, .08),
+    inset 0 1px 0 rgba(255,255,255,.04);
+  transition: border-color .25s, box-shadow .25s;
+}
+
+#messageForm:focus-within {
+  border-color: #ad8cff;
+  box-shadow:
+    0 0 0 4px rgba(158, 119, 255, .1),
+    0 12px 35px rgba(0, 0, 0, .3);
+}
+
+#messageInput {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  padding: 12px 15px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  box-shadow: none;
+  font-size: 14px;
+}
+
+#messageInput:focus {
+  border: 0;
+  box-shadow: none;
+}
+
+#messageInput::placeholder {
+  color: #9184ad;
+}
+
+#sendButton {
+  min-width: 92px;
+  min-height: 46px;
+  padding: 0 19px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #d0b5ff, #9869ed);
+  color: #180c2c;
+  font-weight: 850;
+  box-shadow: 0 5px 18px rgba(148, 102, 224, .3);
+}
+
+.tools {
+  max-width: 1000px;
+  margin: 15px auto 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tools button {
+  min-height: 40px;
+  padding: 9px 15px;
+  border-radius: 13px;
+  background: rgba(67, 48, 99, .7);
+  border: 1px solid rgba(184, 148, 255, .2);
+  color: #e9dcff;
+  font-size: 12px;
+}
+
+.tools button:disabled {
+  opacity: .4;
+}
+
+#recordingStatus {
+  color: #d3baff;
+}
+
+#previewAudio {
+  max-width: 1000px;
+  margin: 14px auto 0;
+  border-radius: 12px;
+}
+
+#audioError {
+  max-width: 1000px;
+  margin: 9px auto 0;
+}
+
+@media(max-width:600px) {
+  .composer {
+    padding: 13px 12px 17px;
+  }
+
+  #messageForm {
+    gap: 5px;
+    padding: 5px;
+    border-radius: 16px;
+  }
+
+  #messageInput {
+    min-height: 45px;
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  #sendButton {
+    min-width: 67px;
+    min-height: 43px;
+    padding: 0 11px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+
+  .tools {
+    gap: 7px;
+    margin-top: 12px;
+  }
+
+  .tools button {
+    padding: 9px 10px;
+    font-size: 11px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -276,9 +950,27 @@ h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:0 0 14px}
 
 <section id="dashboard">
 <main>
-  <h1>Your private space.</h1>
-  <p class="muted">Create rooms and invite people you trust using their registered email address.</p>
+  <section class="universe-hero" aria-label="5M Chat universe">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="eyebrow-dot"></span> YOUR PRIVATE UNIVERSE</div>
+      <h1>Your space.<br><span>Your people.</span></h1>
+      <p class="muted">A quieter corner of the internet. Create a private room and bring your people in.</p>
+      <div class="hero-facts">
+        <span><i></i> Private rooms</span>
+        <span><i></i> Five-minute messages</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <canvas id="universeCanvas" aria-label="Animated three-dimensional purple planet"></canvas>
+      <div class="orbit-caption caption-top">5M / PRIVATE SPACE</div>
+      <div class="orbit-caption caption-bottom">TALK FREELY · TIME DISAPPEARS</div>
+    </div>
+  </section>
 
+  <div class="section-heading">
+    <div><div class="eyebrow">YOUR SPACE</div><h2>Make a connection</h2></div>
+    <span class="section-hint">Only invited members can enter</span>
+  </div>
   <div class="grid">
     <section class="panel">
       <h2>＋ Create a room</h2>
@@ -300,7 +992,19 @@ h1{font-size:26px;margin:0 0 8px}h2{font-size:18px;margin:0 0 14px}
     </section>
   </div>
 
-  <section class="panel">
+  <section class="panel" style="margin-top:18px">
+    <h2>↗ Join with a room code</h2>
+    <p class="muted">Have a code from a friend? Enter it here to join their room.</p>
+    <form id="joinCodeForm">
+      <div class="field">
+        <label for="joinRoomCode">Room code</label>
+        <input id="joinRoomCode" name="roomCode" maxlength="40" autocomplete="off" autocapitalize="characters" placeholder="Enter room code" required>
+      </div>
+      <button class="full" id="joinCodeButton" type="submit">Join room</button>
+    </form>
+  </section>
+
+  <section class="panel" style="margin-top:18px">
     <h2>My rooms</h2>
     <p class="muted">Your private rooms and their room codes.</p>
     <div id="roomNotice" role="status" class="notice hidden"></div>
@@ -970,6 +1674,33 @@ $("createForm").addEventListener("submit", async event => {
     displayDashboardError(error.message);
   } finally {
     button.disabled = false;
+  }
+});
+
+$("joinCodeForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const input = $("joinRoomCode");
+  const button = $("joinCodeButton");
+  const code = input.value.trim().toUpperCase();
+  if (!code) return;
+
+  button.disabled = true;
+  button.textContent = "Joining...";
+  displayDashboardError("");
+  try {
+    const data = await api("/api/rooms/join", {
+      method: "POST",
+      body: JSON.stringify({ code })
+    });
+    input.value = "";
+    await loadRooms();
+    showNotice(data.message || "You joined the room.");
+    enterRoom(data.room.code);
+  } catch (error) {
+    showNotice(error.message || "Could not join this room.", true);
+  } finally {
+    button.disabled = false;
+    button.textContent = "Join room";
   }
 });
 
@@ -1765,16 +2496,57 @@ function renderMessage(message) {
   scrollToBottom();
 }
 
-function binaryToBlob(audio,mimeType) {
+
+function binaryToBlob(audio, mimeType) {
+  const fallbackType = mimeType || "audio/webm";
+
   if (audio instanceof Blob) return audio;
-  if (audio instanceof ArrayBuffer || ArrayBuffer.isView(audio)) return new Blob([audio],{type:mimeType || "audio/webm"});
-  if (audio && audio.type === "Buffer" && Array.isArray(audio.data)) return new Blob([new Uint8Array(audio.data)],{type:mimeType || "audio/webm"});
+
+  if (audio instanceof ArrayBuffer || ArrayBuffer.isView(audio)) {
+    return new Blob([audio], { type: fallbackType });
+  }
+
+  if (audio && audio.type === "Buffer" && Array.isArray(audio.data)) {
+    return new Blob([new Uint8Array(audio.data)], {
+      type: fallbackType
+    });
+  }
+
+  if (typeof audio === "string") {
+    let base64 = audio;
+    let detectedType = fallbackType;
+
+    if (audio.startsWith("data:")) {
+      const parts = audio.split(",");
+      const match = parts[0].match(/^data:([^;]+)/);
+
+      if (!match || !parts[0].includes(";base64")) {
+        throw new Error("Invalid audio data URL");
+      }
+
+      detectedType = match[1];
+      base64 = parts.slice(1).join(",");
+    }
+
+    base64 = base64.replace(/\s/g, "").replace(/-/g, "+").replace(/_/g, "/");
+
+    while (base64.length % 4) {
+      base64 += "=";
+    }
+
+    const decoded = atob(base64);
+    const bytes = new Uint8Array(decoded.length);
+
+    for (let i = 0; i < decoded.length; i++) {
+      bytes[i] = decoded.charCodeAt(i);
+    }
+
+    return new Blob([bytes], { type: detectedType });
+  }
+
   throw new Error("Unsupported audio data");
 }
 
-function scrollToBottom() {
-  $("messages").scrollTop = $("messages").scrollHeight;
-}
 
 /* VOICE MESSAGES */
 $("recordButton").addEventListener("click", async () => {
@@ -1903,6 +2675,131 @@ async function initializeDashboard() {
 }
 
 initializeDashboard();
+</script>
+
+
+<script type="module">
+(() => {
+  const canvas = document.getElementById("universeCanvas");
+  if (!canvas) return;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let renderer, scene, camera, frame = 0, resizeObserver, animating = false;
+  try {
+    import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js").then(THREE => {
+      if (!canvas.isConnected) return;
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+      camera.position.set(0, 0, 8.6);
+      renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "low-power" });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
+      renderer.setClearColor(0x000000, 0);
+
+      const group = new THREE.Group();
+      scene.add(group);
+
+      const planetGeometry = new THREE.IcosahedronGeometry(1.48, 5);
+      const planetMaterial = new THREE.MeshStandardMaterial({
+        color: 0x7750c9, roughness: .34, metalness: .48,
+        emissive: 0x251044, emissiveIntensity: .48, flatShading: false
+      });
+      const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+      group.add(planet);
+
+      const wire = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(1.505, 2),
+        new THREE.MeshBasicMaterial({ color: 0xcbb2ff, wireframe: true, transparent: true, opacity: .12 })
+      );
+      group.add(wire);
+
+      const ringMaterial = new THREE.MeshBasicMaterial({ color: 0xb99aff, transparent: true, opacity: .7, side: THREE.DoubleSide });
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(2.05, .012, 8, 180), ringMaterial);
+      ring.rotation.set(.95, .24, -.25);
+      group.add(ring);
+      const ring2 = new THREE.Mesh(new THREE.TorusGeometry(2.36, .006, 6, 180),
+        new THREE.MeshBasicMaterial({ color: 0x7e5acb, transparent: true, opacity: .48, side: THREE.DoubleSide }));
+      ring2.rotation.set(1.1, -.15, .18);
+      group.add(ring2);
+
+      const glow = new THREE.PointLight(0xb99aff, 95, 12);
+      glow.position.set(2.7, 2.3, 3.8);
+      scene.add(glow);
+      scene.add(new THREE.AmbientLight(0x9b86c8, 1.6));
+      const key = new THREE.PointLight(0x7951dc, 35, 14);
+      key.position.set(-3, -1, 3);
+      scene.add(key);
+
+      const starCount = 420;
+      const starPositions = new Float32Array(starCount * 3);
+      for (let i = 0; i < starCount; i++) {
+        const radius = 3.0 + Math.random() * 4.8;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+        starPositions[i*3] = radius * Math.sin(phi) * Math.cos(theta);
+        starPositions[i*3+1] = radius * Math.sin(phi) * Math.sin(theta);
+        starPositions[i*3+2] = radius * Math.cos(phi);
+      }
+      const starGeo = new THREE.BufferGeometry();
+      starGeo.setAttribute("position", new THREE.BufferAttribute(starPositions, 3));
+      const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xdacbff, size: .018, transparent: true, opacity: .8 }));
+      scene.add(stars);
+
+      let pointerX = 0, pointerY = 0, targetX = 0, targetY = 0;
+      canvas.addEventListener("pointermove", e => {
+        const rect = canvas.getBoundingClientRect();
+        pointerX = ((e.clientX - rect.left) / rect.width - .5) * 1.2;
+        pointerY = ((e.clientY - rect.top) / rect.height - .5) * .7;
+      }, { passive: true });
+      canvas.addEventListener("pointerleave", () => { pointerX = 0; pointerY = 0; }, { passive: true });
+
+      const resize = () => {
+        const rect = canvas.getBoundingClientRect();
+        const width = Math.max(1, Math.round(rect.width));
+        const height = Math.max(1, Math.round(rect.height));
+        renderer.setSize(width, height, false);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+      };
+      resizeObserver = new ResizeObserver(resize);
+      resizeObserver.observe(canvas);
+      resize();
+
+      const draw = () => {
+        if (animating) return;
+        animating = true;
+        const renderFrame = () => {
+          if (!animating) return;
+          frame = requestAnimationFrame(renderFrame);
+        targetX += (pointerX - targetX) * .035;
+        targetY += (pointerY - targetY) * .035;
+        if (!reducedMotion) {
+          group.rotation.y += .0028;
+          planet.rotation.x += .0007;
+          stars.rotation.y -= .00012;
+          ring.rotation.z += .00035;
+        }
+        group.rotation.x = targetY * .22;
+        group.position.x = targetX * .25;
+          renderer.render(scene, camera);
+        };
+        renderFrame();
+      };
+      draw();
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          animating = false;
+          cancelAnimationFrame(frame);
+        } else {
+          draw();
+        }
+      });
+    }).catch(error => {
+      console.warn("3D scene unavailable; keeping the 5M Chat interface active.", error);
+      canvas.classList.add("scene-fallback");
+    });
+  } catch (error) {
+    console.warn("3D scene could not start.", error);
+  }
+})();
 </script>
 
 </body>
