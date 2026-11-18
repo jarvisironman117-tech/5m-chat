@@ -360,7 +360,31 @@ app.post("/api/auth/register", async (req, res) => {
     });
   }
 });
+app.get("/api/auth/me", requireAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.session.userId).lean();
 
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Please log in."
+      });
+    }
+
+    return res.json({
+      success: true,
+      user: publicUser(user)
+    });
+
+  } catch (error) {
+    console.error("Account fetch error:", error.message);
+
+    return res.status(500).json({
+      success: false,
+      message: "Could not load your account."
+    });
+  }
+});
 // ---------------- PRIVATE ROOM API ----------------
 // Create a room. Its creator is the first member and owner.
 app.post("/api/rooms", requireAuth, async (req, res) => {
