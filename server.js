@@ -264,6 +264,44 @@ async function addMessage(room, message) {
 
 // ---------------- AUTH API ----------------
 
+app.post("/api/auth/login", async (req, res) => {
+  try {
+    const email = String(req.body.email || "").trim().toLowerCase();
+    const password = String(req.body.password || "");
+
+    if (!validEmail(email) || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter a valid email and password."
+      });
+    }
+
+    const user = await User.findOne({ email }).select("+passwordHash");
+
+    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password."
+      });
+    }
+
+    await startLoginSession(req, user);
+
+    return res.json({
+      success: true,
+      user: publicUser(user)
+    });
+
+  } catch (error) {
+    console.error("Login error:", error.message);
+
+    return res.status(500).json({
+      success: false,
+      message: "Could not log in. Please try again."
+    });
+  }
+});
+
 app.post("/api/auth/register", async (req, res) => {
   try {
     const name = cleanName(req.body.name);
